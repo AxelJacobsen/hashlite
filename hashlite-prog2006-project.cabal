@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           hashlite
+name:           hashlite-prog2006-project
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/AxelJacobsen/hashlite#readme>
-homepage:       https://github.com/AxelJacobsen/hashlite#readme
-bug-reports:    https://github.com/AxelJacobsen/hashlite/issues
+homepage:       https://github.com/AxelJacobsen/hashlite-prog2006-project#readme
+bug-reports:    https://github.com/AxelJacobsen/hashlite-prog2006-project/issues
 author:         Axel Jacobsen
 maintainer:     aejacobs@stud.ntnu.no
 copyright:      Copyright (c) 2022 Axel E. W. Jacobsen
@@ -21,40 +21,48 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/AxelJacobsen/hashlite
+  location: https://github.com/AxelJacobsen/hashlite-prog2006-project
 
 library
   exposed-modules:
       Lib
+      MapGenerator
   other-modules:
-      Paths_hashlite
+      Paths_hashlite_prog2006_project
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , random
   default-language: Haskell2010
 
 executable hashlite-exe
   main-is: Main.hs
   other-modules:
-      Paths_hashlite
+      Paths_hashlite_prog2006_project
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , hashlite
+    , hashlite-prog2006-project
+    , random
   default-language: Haskell2010
 
 test-suite hashlite-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_hashlite
+      Paths_hashlite_prog2006_project
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
-    , hashlite
+      HUnit
+    , QuickCheck
+    , base >=4.7 && <5
+    , doctest
+    , hashlite-prog2006-project
+    , hspec
+    , random
   default-language: Haskell2010

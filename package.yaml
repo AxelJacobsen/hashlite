@@ -1,6 +1,6 @@
-name:                hashlite
+name:                hashlite-prog2006-project
 version:             0.1.0.0
-github:              "AxelJacobsen/hashlite"
+github:              "AxelJacobsen/hashlite-prog2006-project"
 license:             BSD3
 author:              "Axel Jacobsen"
 maintainer:          "aejacobs@stud.ntnu.no"
@@ -28,14 +28,14 @@ library:
 
 executables:
   hashlite-exe:
-    main:                gameEntry.hs
+    main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hashlite
+    - hashlite-prog2006-project
 
 tests:
   hashlite-test:
@@ -46,4 +46,8 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hashlite
+    - hashlite-prog2006-project
+    - doctest
+    - QuickCheck
+    - HUnit
+    - hspec

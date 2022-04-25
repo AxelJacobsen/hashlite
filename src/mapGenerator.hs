@@ -12,9 +12,10 @@ fillBoardWithValues' size count maxVal board inSeed = do
     if board == [[]] then fillBoardWithValues' size (count-1) maxVal [mapCom] newSeed 
     else fillBoardWithValues' size (count-1) maxVal (board++[mapCom]) newSeed
 
+ -- x <= 2 == Empty, 3 == combat, 4 == chest 5 == encounter
 fillInnerBoard' :: Int -> Int -> StdGen -> [Int] -> ([Int], StdGen)
 fillInnerBoard' 0 _ outSeed map = (map, outSeed)
 fillInnerBoard' counter maxRngVal inSeed map = do
-    let (randNum, outSeed) = randomR (0, maxRngVal) inSeed :: (Int, StdGen) -- x <= 3 == Empty, 4 == combat, 5 == chest 6 == encounter
-    if randNum <= 3 then fillInnerBoard' (counter-1) maxRngVal outSeed (map++[0])
+    let (randNum, outSeed) = randomR (0, maxRngVal) inSeed :: (Int, StdGen)
+    if randNum <= 2 then fillInnerBoard' (counter-1) maxRngVal outSeed (map++[0])
     else fillInnerBoard' (counter-1) maxRngVal outSeed (map++[randNum])

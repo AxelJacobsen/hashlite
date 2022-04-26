@@ -1,3 +1,10 @@
-module Ip_mainloop where
+module Ip_mainLoop (gameLoop) where
 
--- By the time to program arrives here, a functional map should be created 
+import Structs (Player)
+import System.Random ( Random(randomR), StdGen )
+-- Main Loop
+gameLoop :: Player -> ([[Int]], StdGen) -> IO ()
+gameLoop _ (_,_) = print  "Cookie for you :)"
+    -- PRINT CURRENT MAP
+    -- PRINT "VISUAL MOVEMENT OPTIONS"
+    -- PRINT INVENTORY OPTIONS

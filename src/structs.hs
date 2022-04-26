@@ -1,3 +1,2 @@
-module Structs where
-
-data Player = Player { hp::Int, weapon::Int, armour::Int, healpot::Int, money::Int}
+module Structs (Player(..)) where         
+data Player = Player { name::String, hp::Int, weapon::Int, armour::Int, healpot::Int, money::Int, lowestLayer::Int} deriving (Show)

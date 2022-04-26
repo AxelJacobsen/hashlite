@@ -25,8 +25,11 @@ source-repository head
 
 library
   exposed-modules:
+      InitializeCharacter
+      Ip_mainLoop
       Lib
       MapGenerator
+      Structs
   other-modules:
       Paths_hashlite_prog2006_project
   hs-source-dirs:

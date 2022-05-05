@@ -11,6 +11,5 @@ main :: IO ()
 main = do
     originalSeed <- newStdGen
     --CHECK FILE FOR EXISTING PLAYER FIRST
-    
     --IF NO PLAYER EXISTS ASK FOR NAME AND START
     gameLoop (generateCharacter "" "") (generateBoard 10 5 originalSeed)

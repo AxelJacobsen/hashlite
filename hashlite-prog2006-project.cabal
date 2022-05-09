@@ -25,8 +25,12 @@ source-repository head
 
 library
   exposed-modules:
-      Ip_mainLoop
-      Lib
+      Consts
+      Initialization.Impure.Ip_initChar
+      Initialization.Pure.MapGenerator
+      Initialization.Pure.P_initChar
+      MainLoop.Ip_mainLoop
+      MainLoop.P_mainLoop
       Structs
       TextGeneral
   other-modules:

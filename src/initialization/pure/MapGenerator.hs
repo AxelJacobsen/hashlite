@@ -1,4 +1,4 @@
-module MapGenerator (generateBoard) where 
+module Initialization.Pure.MapGenerator (generateBoard) where 
 
 import System.Random ( Random(randomR), StdGen )
 
@@ -12,7 +12,7 @@ fillBoardWithValues' size count maxVal board inSeed = do
     if board == [[]] then fillBoardWithValues' size (count-1) maxVal [mapCom] newSeed 
     else fillBoardWithValues' size (count-1) maxVal (board++[mapCom]) newSeed
 
- -- x <= 2 == Empty, 3 == combat, 4 == chest 5 == encounter
+-- x <= 2 == Empty, 3 == combat, 4 == chest 5 == encounter
 fillInnerBoard' :: Int -> Int -> StdGen -> [Int] -> ([Int], StdGen)
 fillInnerBoard' 0 _ outSeed map = (map, outSeed)
 fillInnerBoard' counter maxRngVal inSeed map = do

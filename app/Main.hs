@@ -18,3 +18,4 @@ main = do
     _ <- getLine
     --IF NO PLAYER EXISTS ASK FOR NAME AND START
     gameLoop (generateCharacter "") (-1) (generateBoard 10 5 originalSeed)
+    --

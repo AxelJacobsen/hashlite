@@ -44,6 +44,7 @@ setMarkerEntry (_,_) (_,_) _ []  map = map -- List has been iterated or was empt
 setMarkerEntry (markX, markY) (sizeX, sizeY) marker (curMap:original) map
     | markX == sizeX && sizeX == 0 && map == [[]] = [setMarkerInner markY sizeY marker [] curMap]
     | markX == sizeX && sizeX == 0 = map++[setMarkerInner markY sizeY marker [] curMap]
+    | markX == sizeX && map == [[]] = setMarkerEntry (markX, markY) (sizeX-1, sizeY) marker original [setMarkerInner markY sizeY marker [] curMap]--setStartRec (startX, startY) (endX, endY) (map, keepSeed)
     | markX == sizeX = setMarkerEntry (markX, markY) (sizeX-1, sizeY) marker original (map++[setMarkerInner markY sizeY marker [] curMap])--setStartRec (startX, startY) (endX, endY) (map, keepSeed)
     | map == [[]] = setMarkerEntry (markX, markY) (sizeX-1, sizeY) marker original [curMap]
     | otherwise = setMarkerEntry (markX, markY) (sizeX-1, sizeY) marker original (map++[curMap])

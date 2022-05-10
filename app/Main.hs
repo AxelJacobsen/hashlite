@@ -1,6 +1,6 @@
 module Main where
 
-import Initialization.Pure.MapGenerator (generateBoard)
+import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
 import Initialization.Pure.P_initChar (generateCharacter)
 import System.Random (mkStdGen, newStdGen)
 import Structs (Player)
@@ -13,9 +13,9 @@ main = do
     originalSeed <- newStdGen
     --CHECK FILE FOR EXISTING PLAYER FIRST
     contents <- readFile "logo.txt"
-    print contents
+    putStrLn contents
     print pressEnter
     _ <- getLine
     --IF NO PLAYER EXISTS ASK FOR NAME AND START
-    gameLoop (generateCharacter "") (-1) (generateBoard 10 5 originalSeed)
+    gameLoop (generateCharacter "") (-1) (generateEmptyBoard 10) (generateBoard 10 5 originalSeed)
     --

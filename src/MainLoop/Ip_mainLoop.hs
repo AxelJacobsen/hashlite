@@ -1,5 +1,5 @@
 module MainLoop.Ip_mainLoop (gameLoop) where
-import Structs (Player (Player, name))
+import Structs (Player (..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import System.Directory(doesFileExist)
@@ -22,11 +22,11 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
         let (newFilledBoard, outSeed, goalX,goalY) = placeStartEnd newSize False (freshBoard, inSeed)                 -- Gets new goal coords
-        
+
         let newPlayer = newLayer player (startX,startY) (goalX, goalY)
         putStrLn ("You have leveld up, "++name player++"! MAXHP increased.")
         gameLoop newPlayer (getListValue mainPhases 1) newExploredBoard (newFilledBoard, outSeed)
-        
+
     | turnStep == getListValue mainPhases 0 = do
         --Fills map with goal and 
         let (newExploredBoard, _, startX, startY) = placeStartEnd (length board) True (exploredMap, inSeed)
@@ -38,12 +38,17 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
             if null newName then gameLoop (generateCharacter "") turnStep newExploredBoard (newFilledBoard,outSeed)
             else do
                 genNewFile playerNamePath newName --Stores new name into file
-                gameLoop (generateCharacter newName) (getListValue mainPhases 1) newExploredBoard (newFilledBoard,outSeed) --Character name not null
+                let outPlayer = newLayer (generateCharacter newName) (startX, startY) (goalX, goalY)
+                gameLoop outPlayer (getListValue mainPhases 1) newExploredBoard (newFilledBoard,outSeed) --Character name not null
         else do --File already exists
             handle <- openFile playerNamePath ReadMode
             contents <- hGetContents handle
             let charNameFile = head (lines contents)
-            gameLoop (generateCharacter charNameFile) (getListValue mainPhases 1) newExploredBoard (newFilledBoard,outSeed) --Player generated with file name
+            let outPlayer = newLayer (generateCharacter charNameFile) (startX, startY) (goalX, goalY)
+            print (start outPlayer)
+            print (playerPos outPlayer)
+            print (goal outPlayer)
+            gameLoop outPlayer (getListValue mainPhases 1) newExploredBoard (newFilledBoard,outSeed) --Player generated with file name
 
     --"MAIN MENU"
     | turnStep == getListValue mainPhases 1 = do
@@ -57,6 +62,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     --Enters Move loops
     | turnStep == getListValue mainPhases 2 = do
         (newPlayer, newlyExploredMap, fullMap, newSeed) <- moveLoop player 0 exploredMap (board,inSeed)
+        print newlyExploredMap
         gameLoop newPlayer (getListValue mainPhases 1) newlyExploredMap (fullMap,newSeed)
     | turnStep == getListValue mainPhases 3 = do
         print "REST LOOP"

@@ -7,33 +7,34 @@ import Public.P_updatePlayer (updatePos)
 generateCharacter :: String -> Player
 generateCharacter name = Player {
     name = name,
-    maxHp=10,
-    hp=10,
+    maxHp=5,    --Initialized with little HP because its immediatily increased
+    hp=5,
     weapon  = 0,
     armour  = 0,
     healpot = 1,
     money   = 10,
     lowestLayer = 0,
     playerPos = (0,0),
+    start = (0,0),
     goal = (0,0)}
 
 --Handles getting limits for positioning
 placeStartEnd :: Int -> Bool -> ([[Int]],StdGen) -> ([[Int]], StdGen, Int,Int)
 placeStartEnd size isVisible (map, inseed) = do
-    let randomLower = calcLower size 0.25
-    let (startX, seedOne) = randomR (randomLower, size) inseed :: (Int, StdGen) --Generates starting position X
-    let (startY, seedTwo) = randomR (randomLower, size) seedOne :: (Int, StdGen) --Generates starting position Y
-    let (endX , seedThree) = randomR (0, size) seedTwo :: (Int, StdGen) --Generates exit position X
+    let randomLower = calcLower (size-1) 0.25
+    let (startX, seedOne) = randomR (randomLower, size-1) inseed :: (Int, StdGen) --Generates starting position X
+    let (startY, seedTwo) = randomR (randomLower, size-1) seedOne :: (Int, StdGen) --Generates starting position Y
+    let (endX , seedThree) = randomR (1, size-1) seedTwo :: (Int, StdGen) --Generates exit position X
     --let mapWithStart = setStartRec (startX, startY) map ([[]], outSeed)
     let mapWithStart = setMarkerEntry (startX, startY) (size,size) 99 map [[]]
 
     if isVisible then (mapWithStart, inseed, startX, startY)
     else do
         if startY < size `div` 2 then do
-            let (endY, outSeed) = randomR (size `div` 2, size) seedThree :: (Int, StdGen)
+            let (endY, outSeed) = randomR (size-1 `div` 2, size-1) seedThree :: (Int, StdGen)
             (setMarkerEntry (endX, endY) (size,size) 100 mapWithStart [[]], outSeed, endX, endY)
         else do
-            let (endY, outSeed) = randomR (floor 0, size`div`2) seedThree :: (Int, StdGen)
+            let (endY, outSeed) = randomR (floor 1, (size-1)`div`2) seedThree :: (Int, StdGen)
             (setMarkerEntry (endX, endY) (size,size) 100 mapWithStart [[]] , outSeed, endX, endY)
 
 --Inserts start and end marker into map 

@@ -26,16 +26,16 @@ placeStartEnd size isVisible (map, inseed) = do
     let (startY, seedTwo) = randomR (randomLower, size-1) seedOne :: (Int, StdGen) --Generates starting position Y
     let (endX , seedThree) = randomR (1, size-1) seedTwo :: (Int, StdGen) --Generates exit position X
     --let mapWithStart = setStartRec (startX, startY) map ([[]], outSeed)
-    let mapWithStart = setMarkerEntry (startX, startY) (size,size) 99 map [[]]
+    let mapWithStart = setMarkerEntry (startX, startY) (size-1, size) 99 map [[]]
 
     if isVisible then (mapWithStart, inseed, startX, startY)
     else do
         if startY < size `div` 2 then do
             let (endY, outSeed) = randomR (size-1 `div` 2, size-1) seedThree :: (Int, StdGen)
-            (setMarkerEntry (endX, endY) (size,size) 100 mapWithStart [[]], outSeed, endX, endY)
+            (setMarkerEntry (endX, endY) (size-1, size) 100 mapWithStart [[]], outSeed, endX, endY)
         else do
             let (endY, outSeed) = randomR (floor 1, (size-1)`div`2) seedThree :: (Int, StdGen)
-            (setMarkerEntry (endX, endY) (size,size) 100 mapWithStart [[]] , outSeed, endX, endY)
+            (setMarkerEntry (endX, endY) (size-1, size) 100 mapWithStart [[]] , outSeed, endX, endY)
 
 --Inserts start and end marker into map 
 setMarkerEntry :: (Int,Int) -> (Int,Int) -> Int -> [[Int]] -> [[Int]] -> [[Int]]
@@ -55,7 +55,6 @@ setMarkerInner _ _ _ outMap [] = outMap
 setMarkerInner markPos fullLength marker curMap (mapIt:inMap)
     | markPos == 0 && fullLength == 0 && curMap /= [] = curMap++[marker]
     | markPos == 0 && fullLength == 0 = [marker]
-    | fullLength == 0 = curMap
     | markPos == 0 = setMarkerInner (markPos-1) (fullLength-1) marker (curMap++[marker]) inMap
     | otherwise = setMarkerInner (markPos-1) (fullLength-1) marker (curMap++[mapIt]) inMap
 

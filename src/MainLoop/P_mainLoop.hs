@@ -1,5 +1,7 @@
 module MainLoop.P_mainLoop(checkLegalIdleChoice,getListValue) where
 import Data.Char (toLower)
+import Consts ( mainPhases)
+
 
 checkLegalIdleChoice :: Char -> []Char -> Int -> Int
 checkLegalIdleChoice entry [] pos = -1
@@ -8,6 +10,6 @@ checkLegalIdleChoice entry (option:options) count
     | otherwise = checkLegalIdleChoice entry options (count+1)
 
 getListValue :: []Int -> Int -> Int
-getListValue [] _ = -99
+getListValue [] _ = (getListValue mainPhases 1)
 getListValue (value:listOfValues) 0 = value
 getListValue (value:listOfValues) num = getListValue listOfValues (num-1)

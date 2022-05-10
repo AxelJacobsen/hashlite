@@ -14,7 +14,7 @@ main = do
     --CHECK FILE FOR EXISTING PLAYER FIRST
     contents <- readFile "logo.txt"
     putStrLn contents
-    print pressEnter
+    putStrLn pressEnter
     _ <- getLine
     --IF NO PLAYER EXISTS ASK FOR NAME AND START
     gameLoop (generateCharacter "") (-1) (generateEmptyBoard 10) (generateBoard 10 5 originalSeed)

@@ -38,6 +38,7 @@ library
       MoveLoop.Loot.P_loot
       MoveLoop.P_Move
       Public.P_publicFuncs
+      Public.P_updatePlayer
       Structs
       TextGeneral
   other-modules:

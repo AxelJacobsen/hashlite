@@ -61,7 +61,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
 
     --Enters Move loops
     | turnStep == getListValue mainPhases 2 = do
-        (newPlayer, newlyExploredMap, fullMap, newSeed) <- moveLoop player 0 exploredMap (board,inSeed)
+        (newPlayer, newlyExploredMap, fullMap, newSeed) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
         print newlyExploredMap
         gameLoop newPlayer (getListValue mainPhases 1) newlyExploredMap (fullMap,newSeed)
     | turnStep == getListValue mainPhases 3 = do
@@ -70,8 +70,10 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == getListValue mainPhases 4 = do
         putStrLn exitGame
         answer <- getLine
-        case answer of
-            "y" -> putStrLn("Thanks for playing, see you later "++name player++"!")
-            "n" -> gameLoop player (getListValue mainPhases 1) exploredMap (board,inSeed)
-            _ -> gameLoop player (getListValue mainPhases 4) exploredMap (board,inSeed)
+        if not (null answer) then do
+            case toLower (head answer) of
+                'y' -> putStrLn("Thanks for playing, see you later "++name player++"!")
+                'n' -> gameLoop player (getListValue mainPhases 1) exploredMap (board,inSeed)
+                _ -> gameLoop player (getListValue mainPhases 4) exploredMap (board,inSeed)
+        else gameLoop player (getListValue mainPhases 4) exploredMap (board,inSeed)
     | otherwise = putStrLn "ERROR IN GAME LOOP"

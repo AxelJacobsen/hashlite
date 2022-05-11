@@ -16,7 +16,8 @@ generateCharacter name = Player {
     lowestLayer = 0,
     playerPos = (0,0),
     start = (0,0),
-    goal = (0,0)}
+    goal = (0,0),
+    prevDir = 0}
 
 --Handles getting limits for positioning
 placeStartEnd :: Int -> Bool -> ([[Int]],StdGen) -> ([[Int]], StdGen, Int,Int)

@@ -5,7 +5,7 @@ import Structs(Player (..))
 import TextGeneral(moveSymbols,moveOptions,moveIllegal)
 import Data.Char (toLower)
 import Public.P_updatePlayer (updatePos, updatePrevdir)
-import MoveLoop.P_Move(checkForLegalMove)
+import MoveLoop.P_Move(checkForLegalMove,checkTileValue)
 
 moveLoop :: Player -> Int -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen)
 moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
@@ -31,7 +31,25 @@ moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
                     putStrLn "Illegal input."
                     moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
             else moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-    | phase == 2 = return (player, exploredMap, unexploredMap, inSeed)-- What tile are you stainding on, call releveant function
+    | phase == 2 = do
+        let boardTile = checkTileValue (playerPos player) unexploredMap
+        case boardTile of
+            -99 -> moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed) --Error on tile, illegal pos
+            3 -> do
+                --ENTER COMBAT LOOP
+                return (player, exploredMap, unexploredMap, inSeed) 
+            4 -> do
+                --ENTER LOOT LOOP
+                return (player, exploredMap, unexploredMap, inSeed)
+            5 -> do
+                --ENTER ENCOUNTER LOOP
+                return (player, exploredMap, unexploredMap, inSeed) 
+            100 -> do
+                --EXIT LEVEL
+                return (player, exploredMap, unexploredMap, inSeed) 
+            _ -> return (player, exploredMap, unexploredMap, inSeed) -- Tile is empty
+
+        return (player, exploredMap, unexploredMap, inSeed)-- What tile are you stainding on, call releveant function
     | otherwise = return (player, exploredMap, unexploredMap, inSeed)-- Exit due to error
 
 -- SIZE OF MAP, MAP, DESIGNED TO PRINT MOVED PLAYER PATH
@@ -142,4 +160,3 @@ handleDirInput player piece prevDir (newX, newY) exploredMap (unexploredMap, inS
     else do
         putStrLn moveIllegal
         moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-        

@@ -7,7 +7,7 @@ import Data.Char (toLower)
 import Public.P_updatePlayer (updatePos, updatePrevdir)
 import MoveLoop.P_Move(checkForLegalMove,checkTileValue)
 
-moveLoop :: Player -> Int -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen)
+moveLoop :: Player -> Int -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
 moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
     | phase == 0 = do-- Display Move Options and map
         putStrLn moveSymbols
@@ -37,20 +37,18 @@ moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
             -99 -> moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed) --Error on tile, illegal pos
             3 -> do
                 --ENTER COMBAT LOOP
-                return (player, exploredMap, unexploredMap, inSeed) 
+                return (player, exploredMap, unexploredMap, inSeed, boardTile)
             4 -> do
                 --ENTER LOOT LOOP
-                return (player, exploredMap, unexploredMap, inSeed)
+                return (player, exploredMap, unexploredMap, inSeed, boardTile)
             5 -> do
                 --ENTER ENCOUNTER LOOP
-                return (player, exploredMap, unexploredMap, inSeed) 
+                return (player, exploredMap, unexploredMap, inSeed, boardTile)
             100 -> do
                 --EXIT LEVEL
-                return (player, exploredMap, unexploredMap, inSeed) 
-            _ -> return (player, exploredMap, unexploredMap, inSeed) -- Tile is empty
-
-        return (player, exploredMap, unexploredMap, inSeed)-- What tile are you stainding on, call releveant function
-    | otherwise = return (player, exploredMap, unexploredMap, inSeed)-- Exit due to error
+                return (player, exploredMap, unexploredMap, inSeed, boardTile)
+            _ -> return (player, exploredMap, unexploredMap, inSeed, boardTile) -- Tile is empty
+    | otherwise = return (player, exploredMap, unexploredMap, inSeed, -99)-- Exit due to error
 
 -- SIZE OF MAP, MAP, DESIGNED TO PRINT MOVED PLAYER PATH
 displayMap :: Int -> [[Int]] -> IO()
@@ -147,7 +145,8 @@ printLines :: Int -> IO()
 printLines 0 = putStrLn "+"
 printLines count = do putStr "---" ; printLines (count-1)
 
-handleDirInput :: Player -> Int -> Int -> (Int,Int) -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen)
+
+handleDirInput :: Player -> Int -> Int -> (Int,Int) -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
 handleDirInput player piece prevDir (newX, newY) exploredMap (unexploredMap, inSeed) = do
     let (newMap,isLegal) = checkForLegalMove (newX,newY) 88 exploredMap inSeed
     if isLegal then do

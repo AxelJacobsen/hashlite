@@ -18,15 +18,15 @@ import Public.P_updatePlayer (updatePos, newLayer)
 gameLoop :: Player -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO ()
 gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == -2 = do --New layer
+        putStrLn "You have found the entrance to the next level!"
         let newSize = 2+length exploredMap    --Increases Size of new map
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
         let (newFilledBoard, outSeed, goalX,goalY) = placeStartEnd newSize False (freshBoard, inSeed)                 -- Gets new goal coords
 
         let newPlayer = newLayer player (startX,startY) (goalX, goalY)
-        putStrLn ("You have leveld up, "++name player++"! MAXHP increased.")
+        putStrLn ("You have leveled up, "++name player++"! MAXHP increased.")
         gameLoop newPlayer 0 newExploredBoard (newFilledBoard, outSeed)
-
     | turnStep == -1 = do
         --Fills map with goal and 
         let (newExploredBoard, _, startX, startY) = placeStartEnd (length board) True (exploredMap, inSeed)
@@ -56,13 +56,18 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         idleChoice <- getLine
         if null idleChoice then do
             gameLoop player turnStep exploredMap (board,inSeed)
-
         else gameLoop player (checkLegalIdleChoice (toLower (head idleChoice)) idleOptionsList 0) exploredMap (board,inSeed) --This should always be one of the leagl options,
 
     --Enters Move loops
     | turnStep == 1 = do
-        (newPlayer, newlyExploredMap, fullMap, newSeed) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
-        gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)
+        (newPlayer, newlyExploredMap, fullMap, newSeed, boardTile) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
+        case boardTile of
+            -99 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)  --ERROR
+            3 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --COMBAT
+            4 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --LOOT
+            5 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --ENCOUNTER
+            100 -> gameLoop newPlayer (-2) newlyExploredMap (fullMap,newSeed)   --NEXT LEVEL
+            _ -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --ALSO ERROR, SHOULDNT HAPPEN
     | turnStep == 2 = do
         print "REST LOOP"
         gameLoop player 0 exploredMap (board,inSeed)

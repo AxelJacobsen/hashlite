@@ -22,7 +22,7 @@ generateCharacter name = Player {
 --Handles getting limits for positioning
 placeStartEnd :: Int -> Bool -> ([[Int]],StdGen) -> ([[Int]], StdGen, Int,Int)
 placeStartEnd size isVisible (map, inseed) = do
-    let randomLower = calcLower (size-1) 0.25
+    let randomLower = calcLower (size-1) 0.1
     let (startX, seedOne) = randomR (randomLower, size-1) inseed :: (Int, StdGen) --Generates starting position X
     let (startY, seedTwo) = randomR (randomLower, size-1) seedOne :: (Int, StdGen) --Generates starting position Y
     let (endX , seedThree) = randomR (1, size-1) seedTwo :: (Int, StdGen) --Generates exit position X
@@ -61,4 +61,4 @@ setMarkerInner markPos fullLength marker curMap (mapIt:inMap)
 
 --Gets lower rng limit for startPos
 calcLower :: Int -> Float -> Int
-calcLower size fract =  size - floor (fract * fromIntegral size)
+calcLower size fract = floor (fract * fromIntegral size)

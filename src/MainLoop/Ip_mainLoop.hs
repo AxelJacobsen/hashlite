@@ -65,7 +65,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         case boardTile of
             -99 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)      --ERROR
             3 -> do
-                (newPlayer, updatedFullmap, newSeed) <- combatLoop player 0 board generateEnemy inSeed
+                (newPlayer, updatedFullmap, newSeed) <- combatLoop player 0 board (generateEnemy (lowestLayer player) inSeed)
                 gameLoop newPlayer 0 newlyExploredMap (updatedFullmap,newSeed)        --COMBAT
             4 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --LOOT
             5 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --ENCOUNTER

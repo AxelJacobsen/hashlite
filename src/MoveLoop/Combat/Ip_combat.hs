@@ -23,7 +23,7 @@ combatLoop player phase unexploredMap (enemy, inSeed)
         putStrLn moveSymbols
         displayMap (length exploredMap) exploredMap
         moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-    | phase == 1 = do
+    | phase == 1 = do       -- Player Turn
         putStrLn moveOptions
         moveDir <- getLine
         let (pposX,pposY) = playerPos player
@@ -41,7 +41,7 @@ combatLoop player phase unexploredMap (enemy, inSeed)
                     putStrLn "Illegal input."
                     moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
             else moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-    | phase == 2 = do
+    | phase == 2 = do   --Enemy attack
         let boardTile = checkTileValue (playerPos player) unexploredMap
         case boardTile of
             -99 -> moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed) --Error on tile, illegal pos

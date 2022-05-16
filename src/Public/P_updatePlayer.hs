@@ -32,6 +32,5 @@ updateGoal inPlayer newX newY = Player (name inPlayer) (maxHp inPlayer) (hp inPl
 updatePrevdir :: Player -> Int -> Player
 updatePrevdir inPlayer = Player (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer)
 
-
 newLayer :: Player -> (Int,Int) -> (Int,Int) -> Player
 newLayer inPlayer (startX,startY) (goalX,goalY) = Player (name inPlayer) (maxHp inPlayer+5) (hp inPlayer+5) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer+1) (startX,startY) (goalX,goalY) (startX,startY) (prevDir inPlayer)

@@ -12,6 +12,7 @@ import Initialization.Impure.Ip_initChar (genNewFile)
 import Initialization.Pure.P_initChar (generateCharacter, placeStartEnd)
 import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
 import MoveLoop.Ip_Move(moveLoop)
+import MoveLoop.Combat.P_combat(generateEnemy)
 import Public.P_updatePlayer (updatePos, newLayer)
 
 -- Main Loop
@@ -62,12 +63,14 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == 1 = do
         (newPlayer, newlyExploredMap, fullMap, newSeed, boardTile) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
         case boardTile of
-            -99 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)  --ERROR
-            3 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --COMBAT
-            4 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --LOOT
-            5 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --ENCOUNTER
+            -99 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)      --ERROR
+            3 -> do
+                (newPlayer, updatedFullmap, newSeed) <- combatLoop player 0 board generateEnemy inSeed
+                gameLoop newPlayer 0 newlyExploredMap (updatedFullmap,newSeed)        --COMBAT
+            4 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --LOOT
+            5 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --ENCOUNTER
             100 -> gameLoop newPlayer (-2) newlyExploredMap (fullMap,newSeed)   --NEXT LEVEL
-            _ -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)    --ALSO ERROR, SHOULDNT HAPPEN
+            _ -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --ALSO ERROR, SHOULDNT HAPPEN
     | turnStep == 2 = do
         print "REST LOOP"
         gameLoop player 0 exploredMap (board,inSeed)

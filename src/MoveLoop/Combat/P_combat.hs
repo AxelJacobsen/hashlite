@@ -12,11 +12,12 @@ generateEnemy inSeed = do
 
 generateEnemyInner :: Int -> Int -> Enemy
 generateEnemyInner enemyType statRng    --Enemy type will always be between 0 - and current player layer depth
-    | enemyType == 0 = genSlime statRng
+    | enemyType <= 0 = genSlime statRng
     | enemyType <= 3 = genGoblin statRng
     | enemyType <= 6 = genOrc statRng
     | enemyType <= 15 = genDrake statRng
     | enemyType <= 40 = genAbomination statRng
+    | otherwise = genAbomination statRng
 
 --Generates a slime type enemy
 genSlime :: Int -> Enemy

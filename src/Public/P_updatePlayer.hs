@@ -41,4 +41,4 @@ incrementExp :: Player -> Int -> Player
 incrementExp inPlayer inExp = Player (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer+inExp) (levelCap inPlayer)
 
 levelUp :: Player -> (Int,Int) -> Player
-levelUp inPlayer (sword, armour)  = Player (name inPlayer) (maxHp inPlayer+5) (hp inPlayer+5) (weapon inPlayer+sword) (armour inPlayer+armour) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) 0 (levelCap inPlayer*2)
+levelUp inPlayer (sword, tank)  = Player (name inPlayer) (maxHp inPlayer+5) (hp inPlayer+5) ((weapon inPlayer)+sword) ((armour inPlayer)+tank) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) 0 (levelCap inPlayer*2)

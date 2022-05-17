@@ -9,15 +9,17 @@ generateCharacter name = Player {
     name = name,
     maxHp=5,    --Initialized with little HP because its immediatily increased
     hp=5,
-    weapon  = 0,
-    armour  = 0,
+    weapon  = 1,
+    armour  = 1,
     healpot = 1,
     money   = 10,
     lowestLayer = 0,
     playerPos = (0,0),
     start = (0,0),
     goal = (0,0),
-    prevDir = 0}
+    prevDir = 0,
+    pExp = 0,
+    levelCap = 1}
 
 --Handles getting limits for positioning
 placeStartEnd :: Int -> Bool -> ([[Int]],StdGen) -> ([[Int]], StdGen, Int,Int)

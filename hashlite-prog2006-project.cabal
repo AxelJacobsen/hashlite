@@ -31,6 +31,7 @@ library
       Initialization.Pure.P_initChar
       MainLoop.Ip_mainLoop
       MainLoop.P_mainLoop
+      MoveLoop.Combat.CombatText
       MoveLoop.Combat.Ip_combat
       MoveLoop.Combat.P_combat
       MoveLoop.Ip_Move

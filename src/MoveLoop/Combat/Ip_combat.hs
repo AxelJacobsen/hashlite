@@ -1,61 +1,64 @@
 module MoveLoop.Combat.Ip_combat where
-import Structs (Player (..))
+import Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
-import System.Directory(doesFileExist)
-import Control.Monad
-import MainLoop.P_mainLoop(checkLegalIdleChoice)
-import TextGeneral ( idleOptionsOne,idleOptionsTwo, exitGame, enterName)
-import Consts ( idleOptionsList, playerNamePath)
-import Data.Char
-import Initialization.Impure.Ip_initChar (genNewFile)
-import Initialization.Pure.P_initChar (generateCharacter, placeStartEnd)
-import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
-import MoveLoop.Ip_Move(moveLoop)
+import MoveLoop.Combat.CombatText (encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage)
 import Public.P_updatePlayer (updatePos, newLayer)
+import Prelude (putStrLn)
 
 -- I want this to go right into the loop to skip unecessary nests
 -- therefore creature type has to be predecided
-combatLoop :: Player -> Int -> [[Int]] -> (Enemy, StdGen) -> IO (Player, [[Int]], StdGen)
-combatLoop player phase unexploredMap (enemy, inSeed)
-    | phase == 0 = do-- Display Move Options and map
-
-        putStrLn moveSymbols
-        displayMap (length exploredMap) exploredMap
-        moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
+combatLoop :: Player -> Int -> (Int,Int) -> [[Int]] -> (Enemy, StdGen) -> IO (Player, [[Int]], StdGen)
+combatLoop player phase (lEhp, lPhp) unexploredMap (enemy, inSeed) -- lehp and phph are temporary damage counters to reduce function calls
+    | phase == 0 = do-- Enter comabt
+        let (coinFlip, outSeed) = randomR (0, 6) inSeed :: (Int, StdGen)
+        case coinFlip of
+            0 -> do
+                putStrLn (coinCritical++(prefix enemy)++(eName enemy)++"!")
+                combatLoop player 2 (lEhp, lPhp) unexploredMap (enemy, inSeed)
+            6 -> do
+                putStrLn (encounterEnemy++(prefix enemy)++(eName enemy))
+                putStrLn (coinSuccess++escape)
+                combatLoop player 3 (lEhp, lPhp) unexploredMap (enemy, inSeed)
+            _ -> do
+                putStrLn (encounterEnemy++(prefix enemy)++(eName enemy))
+                putStrLn (coinNeutral)
+                combatLoop player 1 (lEhp, lPhp) unexploredMap (enemy, inSeed)
     | phase == 1 = do       -- Player Turn
-        putStrLn moveOptions
-        moveDir <- getLine
-        let (pposX,pposY) = playerPos player
-        if not (null moveDir) then do
-            case toLower (head moveDir) of
-                --Move up
-                'w' -> handleDirInput player 1 prevDir (pposX+1,pposY) exploredMap (unexploredMap, inSeed)
-                --Move Left
-                'a' -> handleDirInput player 2 prevDir (pposX,pposY-1) exploredMap (unexploredMap, inSeed)
-                --Move down
-                's' -> handleDirInput player 3 prevDir (pposX-1, pposY) exploredMap (unexploredMap, inSeed)
-                --Move right
-                'd' -> handleDirInput player 4 prevDir (pposX,pposY+1) exploredMap (unexploredMap, inSeed)
-                _ -> do
-                    putStrLn "Illegal input."
-                    moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-            else moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
+        printHp (name player) (eName enemy) ((maxHp player)-lPhp) ((eMaxHp enemy)-lEhp)
+        combatLoop player 2 (lEhp, lPhp) unexploredMap (enemy, inSeed)
     | phase == 2 = do   --Enemy attack
-        let boardTile = checkTileValue (playerPos player) unexploredMap
-        case boardTile of
-            -99 -> moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed) --Error on tile, illegal pos
-            3 -> do
-                --ENTER COMBAT LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            4 -> do
-                --ENTER LOOT LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            5 -> do
-                --ENTER ENCOUNTER LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            100 -> do
-                --EXIT LEVEL
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            _ -> return (player, exploredMap, unexploredMap, inSeed, boardTile) -- Tile is empty
-    | otherwise = return (player, exploredMap, unexploredMap, inSeed, -99)-- Exit due to error
+        printHp (name player) (eName enemy) ((maxHp player)-lPhp) ((eMaxHp enemy)-lEhp)
+        combatLoop player 3 (lEhp, lPhp) unexploredMap (enemy, inSeed)
+    | otherwise = return (player, unexploredMap, inSeed)-- Exit due to error
+
+
+printHp :: String -> String -> Int -> Int  -> IO ()
+printHp name1 name2 hp1 hp2 = do
+    putStr "+"
+    printLine 44
+    putStr "| "
+    putStr (name1++": ")
+    printOneUsercontent " " (20-((length name1)))
+    putStr (name2++": ")
+    printOneUsercontent " " (20-((length name2)))
+    printOneUsercontent "|" (hp1)
+    printOneUsercontent " " (22-hp1)
+    putStrLn " "
+    printOneUsercontent "|" (hp2)
+    printOneUsercontent " " (22-hp2)
+    putStrLn " "
+    putStr "+"
+    printLine 44
+
+printLine :: Int -> IO ()
+printLine 0 = putStrLn "+"
+printLine count = do
+    putStr "-"
+    printLine (count-1)
+
+printOneUsercontent :: String -> Int -> IO ()
+printOneUsercontent _ 0 = putStr "|"
+printOneUsercontent symbol count = do
+    putStr symbol
+    printOneUsercontent symbol (count-1)

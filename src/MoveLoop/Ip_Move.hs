@@ -131,11 +131,14 @@ printMapRow (value:row) = do
         44 -> do
             putStr "---"
             printMapRow row
+        88 -> do
+            putStr " P "
+            printMapRow row
         99 -> do
             putStr " S "
             printMapRow row
-        88 -> do
-            putStr " P "
+        100 -> do
+            putStr " X "
             printMapRow row
         _ -> do
             putStr "   "
@@ -154,6 +157,7 @@ handleDirInput player piece prevDir (newX, newY) exploredMap (unexploredMap, inS
         let outPlayer = updatePrevdir newPlayer piece
         if playerPos player /= start player then do--Sets old position to be directional piece, but only if not startpos
             let (outMap,isLegal) = checkForLegalMove (playerPos player) ((piece*10)+prevDir) newMap inSeed
+            print ((piece*10)+prevDir)
             moveLoop outPlayer 2 piece outMap (unexploredMap, inSeed)
         else moveLoop outPlayer 2 piece newMap (unexploredMap, inSeed)
     else do

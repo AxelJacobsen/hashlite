@@ -5,7 +5,7 @@ import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import System.Directory(doesFileExist)
 import Control.Monad
 import MainLoop.P_mainLoop(checkLegalIdleChoice)
-import TextGeneral ( idleOptionsOne,idleOptionsTwo, exitGame, enterName)
+import TextGeneral (levelUp1,levelUp2, continue,idleOptionsOne,idleOptionsTwo, exitGame, enterName,playerDeath1,playerDeath2,playerDeath3,playerDeath4)
 import Consts ( idleOptionsList, playerNamePath)
 import Data.Char
 import Initialization.Impure.Ip_initChar (genNewFile)
@@ -15,6 +15,7 @@ import MoveLoop.Ip_Move(moveLoop)
 import MoveLoop.Combat.P_combat(generateEnemy)
 import MoveLoop.Combat.Ip_combat(combatLoop)
 import Public.P_updatePlayer (updatePos, newLayer)
+import Public.Ip_publicFuncs(checkLevelUp)
 
 -- Main Loop
 gameLoop :: Player -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO ()
@@ -25,9 +26,8 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
         let (newFilledBoard, outSeed, goalX,goalY) = placeStartEnd newSize False (freshBoard, inSeed)                 -- Gets new goal coords
-
         let newPlayer = newLayer player (startX,startY) (goalX, goalY)
-        putStrLn ("You have leveled up, "++name player++"! MAXHP increased.")
+        putStrLn (levelUp1++name player++levelUp2)
         gameLoop newPlayer 0 newExploredBoard (newFilledBoard, outSeed)
     | turnStep == -1 = do
         --Fills map with goal and 
@@ -51,7 +51,6 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
             print (playerPos outPlayer)
             print (goal outPlayer)
             gameLoop outPlayer 0 newExploredBoard (newFilledBoard,outSeed) --Player generated with file name
-
     --"MAIN MENU"
     | turnStep == 0 = do
         putStrLn (idleOptionsOne++name player++"?"++idleOptionsTwo)
@@ -62,16 +61,21 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
 
     --Enters Move loops
     | turnStep == 1 = do
-        (newPlayer, newlyExploredMap, fullMap, newSeed, boardTile) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
+        (newPlayer, newlyExploredMap, dataMap, newSeed, boardTile) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
         case boardTile of
-            -99 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)      --ERROR
-            3 -> do
-                (newPlayer, updatedFullmap, newSeed) <- combatLoop player 0 (0,0) board (generateEnemy inSeed (lowestLayer player))
-                gameLoop newPlayer 0 newlyExploredMap (updatedFullmap,newSeed)        --COMBAT
-            4 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --LOOT
-            5 -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --ENCOUNTER
-            100 -> gameLoop newPlayer (-2) newlyExploredMap (fullMap,newSeed)   --NEXT LEVEL
-            _ -> gameLoop newPlayer 0 newlyExploredMap (fullMap,newSeed)        --ALSO ERROR, SHOULDNT HAPPEN
+            -99 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)      --ERROR
+            3 -> do                                                             --COMBAT
+                (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop newPlayer 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
+                if result == 0 then do
+                    leveledPlayer <- checkLevelUp player
+                    putStrLn "Press enter to continue..."
+                    trash <- getLine
+                    gameLoop loopPlayer 0 newlyExploredMap (updatedDataMap,loopSeed)
+                else gameLoop loopPlayer 4 newlyExploredMap (updatedDataMap,loopSeed) 
+            4 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --LOOT
+            5 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ENCOUNTER
+            100 -> gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)   --NEXT LEVEL
+            _ -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ALSO ERROR, SHOULDNT HAPPEN
     | turnStep == 2 = do
         print "REST LOOP"
         gameLoop player 0 exploredMap (board,inSeed)
@@ -84,4 +88,6 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
                 'n' -> gameLoop player 0 exploredMap (board,inSeed)
                 _ -> gameLoop player 3 exploredMap (board,inSeed)
         else gameLoop player 3 exploredMap (board,inSeed)
+    | turnStep == 4 = do
+        putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     | otherwise = putStrLn "ERROR IN GAME LOOP"

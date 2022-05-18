@@ -1,5 +1,6 @@
-module Public.P_publicFuncs(drop')where
-
+module Public.P_publicFuncs(drop',healPlayer)where
+import Structs (Player (..))
+import Public.P_updatePlayer (updateHp)
 -- | Returns list wiout the first x indexes
 --
 -- Examples:
@@ -12,3 +13,9 @@ drop' :: Int -> [a] -> [a]
 drop' _ [] = []
 drop' 0 ys = ys
 drop' x ys = drop' (x-1) (tail ys)
+
+healPlayer :: Player -> Player
+healPlayer player = do
+    let maxHeal = maxHp player `div` 5
+    if maxHp player < hp player + maxHeal then updateHp player (maxHp player - hp player)
+    else updateHp player maxHeal

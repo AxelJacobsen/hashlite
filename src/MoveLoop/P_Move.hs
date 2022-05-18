@@ -8,9 +8,10 @@ import Initialization.Pure.P_initChar(setMarkerEntry)
 checkForLegalMove :: (Int,Int) -> Int -> [[Int]] -> StdGen -> ([[Int]], Bool)
 checkForLegalMove (_,_) _ [[]] _ = ([[]],False)
 checkForLegalMove (newX, newY) piece map seed
-    | newX < 0 || newY < 0 || length map <= newX || length map <= newY = (map, False)
+    | newX < 0 || newY < 0 || length map <= newX || length map <= newY = (map, False)   --Trying to move out of bounds
+    | checkTileValue (newX, newY) map == 99 = (map, True)                               --Trying to move onto start tile
     | otherwise = do
-        let newMap = setMarkerEntry (newX, newY) (length map-1, length map) piece map [[]]
+        let newMap = setMarkerEntry (newX, newY) (length map-1, length map) piece map [[]] --Gets the updated map
         (newMap, True)
 
 --Takes current coords and fullMap, then returns value of current tile

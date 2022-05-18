@@ -2,7 +2,7 @@ module MoveLoop.Combat.Ip_combat where
 import Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
-import MoveLoop.Combat.CombatText (missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
+import MoveLoop.Combat.CombatText (critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
 import TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp)
 import Data.Char (toLower)
@@ -37,32 +37,30 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
         if null pInput then combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
         else case toLower (head pInput) of
             'a' -> do 
-                let (dealtDamage, outSeed) = playerDamage enemy player inSeed
+                let (dealtDamage, outSeed, crit) = playerDamage enemy player inSeed
                 clearConsole
-                if dealtDamage == 0 then do
-                    putStrLn (name player++missedAttack)
-                    checkDeath player enemy 2 (lEhp, lPhp) dataMap outSeed
-                else do
-                    pDamagePrint player dealtDamage
-                    checkDeath player enemy 2 (lEhp+dealtDamage, lPhp) dataMap outSeed
+                let hasCrit = if crit then putStrLn critHit else putStr ""
+                let hasMissed = if dealtDamage == 0 then putStrLn (name player++missedAttack) else pDamagePrint player dealtDamage
+                hasCrit
+                hasMissed
+                checkDeath player enemy 2 (lEhp+dealtDamage, lPhp) dataMap outSeed
             'h' -> do
                 if 0 < healpot player then do
-                    let healedPlayer = healPlayer (updateHeal player (-1))
-                    putStrLn (healMessage++ show (hp healedPlayer - hp player) ++"HP.")
-                    combatLoop player 2 (lEhp, lPhp) dataMap (enemy, inSeed)
+                    let (healedPlayer, newLPHP) = healPlayer (updateHeal player (-1), lPhp)
+                    putStrLn (healMessage++ show (lPhp-newLPHP) ++"HP.")
+                    combatLoop healedPlayer 2 (lEhp, newLPHP) dataMap (enemy, inSeed)
                 else do 
                     putStrLn outOfHeal
                     combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
             'e' ->  combatLoop player 9 (lEhp, lPhp) dataMap (enemy, inSeed)
             _ -> combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
     | phase == 2 = do   --Enemy attack
-        let (takenDamage, outSeed) = enemyDamage enemy player inSeed
-        if takenDamage == 0 then do
-            putStrLn ("The "++eName enemy++missedAttack)
-            checkDeath player enemy 1 (lEhp, lPhp) dataMap outSeed
-        else do
-            eDamagePrint enemy takenDamage
-            checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap outSeed
+        let (takenDamage, outSeed, crit) = enemyDamage enemy player inSeed
+        let hasCrit = if crit then putStrLn critHit else putStr ""
+        let hasMissed = if takenDamage == 0 then putStrLn ("The "++eName enemy++missedAttack) else eDamagePrint enemy takenDamage
+        hasCrit
+        hasMissed
+        checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap outSeed
     | phase == 8 = do   --Free escape
         putStrLn escape
         pInput <- getLine
@@ -93,16 +91,15 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
 printHp :: String -> String -> Int -> Int  -> IO ()
 printHp name1 name2 hp1 hp2 = do
     putStr "+"
-    printLine 45
+    printLine 47
     putStr "| "
     putStr (name1++": ")
     printOneUsercontent " " (20-length name1)
     putStr (name2++": ")
     printOneUsercontent " " (20-length name2)
-    putStrLn "| "
     printHpBars hp1 hp2
     putStr "+"
-    printLine 45
+    printLine 47
 
 printLine :: Int -> IO ()
 printLine 0 = putStrLn "+"
@@ -111,9 +108,9 @@ printLine count = do
     printLine (count-1)
 
 printOneUsercontent :: String -> Int -> IO ()
-printOneUsercontent _ 0 = putStr ""
+printOneUsercontent _ 0 = putStr "| "
 printOneUsercontent symbol count = do
-    if count < 0 then putStr ""
+    if count < 0 then putStr "| "
     else do
         putStr symbol
         printOneUsercontent symbol (count-1)
@@ -121,6 +118,7 @@ printOneUsercontent symbol count = do
 printHpBars :: Int -> Int -> IO ()
 printHpBars bar1 bar2 = do
     putStrLn ""
+    putStr "| "
     printOneUsercontent "|" bar1
     printOneUsercontent " " (20-bar1)
     printOneUsercontent "|" bar2

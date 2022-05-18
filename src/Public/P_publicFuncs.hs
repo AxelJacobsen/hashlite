@@ -14,8 +14,8 @@ drop' _ [] = []
 drop' 0 ys = ys
 drop' x ys = drop' (x-1) (tail ys)
 
-healPlayer :: Player -> Player
-healPlayer player = do
+healPlayer :: (Player, Int) -> (Player,Int)
+healPlayer (player, tempHp) = do
     let maxHeal = maxHp player `div` 5
-    if maxHp player < hp player + maxHeal then updateHp player (maxHp player - hp player)
-    else updateHp player maxHeal
+    if maxHp player < (hp player-tempHp) + maxHeal then (updateHp player (maxHp player - hp player), 0)
+    else (updateHp player maxHeal, tempHp-maxHeal)

@@ -14,20 +14,19 @@ import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
 import MoveLoop.Ip_Move(moveLoop)
 import MoveLoop.Combat.P_combat(generateEnemy)
 import MoveLoop.Combat.Ip_combat(combatLoop)
-import Public.P_updatePlayer (updatePos, newLayer)
+import Public.P_updatePlayer (incrementExp, updatePos, newLayer)
 import Public.Ip_publicFuncs(checkLevelUp)
 
 -- Main Loop
 gameLoop :: Player -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO ()
 gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == -2 = do --New layer
-        putStrLn "You have found the entrance to the next level!"
+        putStrLn ("You have found the entrance to the next level!\nYou gain "++show (lowestLayer player)++" EXP!")
         let newSize = 2+length exploredMap    --Increases Size of new map
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
         let (newFilledBoard, outSeed, goalX,goalY) = placeStartEnd newSize False (freshBoard, inSeed)                 -- Gets new goal coords
-        let newPlayer = newLayer player (startX,startY) (goalX, goalY)
-        putStrLn (levelUp1++name player++levelUp2)
+        newPlayer <- checkLevelUp (incrementExp (newLayer player (startX,startY) (goalX, goalY)) (lowestLayer player))
         gameLoop newPlayer 0 newExploredBoard (newFilledBoard, outSeed)
     | turnStep == -1 = do
         --Fills map with goal and 
@@ -67,12 +66,14 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
             0 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --Quit FUNCTION
             3 -> do                                                             --COMBAT
                 (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop newPlayer 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
-                if result == 0 then do
-                    leveledPlayer <- checkLevelUp player
-                    putStrLn "Press enter to continue..."
-                    trash <- getLine
-                    gameLoop loopPlayer 0 newlyExploredMap (updatedDataMap,loopSeed)
-                else gameLoop loopPlayer 4 newlyExploredMap (updatedDataMap,loopSeed) 
+                case result of
+                    0 -> do
+                        leveledPlayer <- checkLevelUp player
+                        putStrLn "Press enter to continue..."
+                        trash <- getLine
+                        gameLoop leveledPlayer 0 newlyExploredMap (updatedDataMap,loopSeed)
+                    1 -> gameLoop newPlayer 4 newlyExploredMap (updatedDataMap,loopSeed) 
+                    _ -> gameLoop newPlayer 0 newlyExploredMap (updatedDataMap,loopSeed) 
             4 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --LOOT
             5 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ENCOUNTER
             100 -> gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)   --NEXT LEVEL

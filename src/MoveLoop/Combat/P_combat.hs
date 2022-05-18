@@ -49,13 +49,18 @@ enemyDamage enemy player inSeed = do
     let (hitReg, outSeed) = randomR (0, 10) inSeed :: (Int, StdGen) -- Check hit
     case hitReg of
         0 -> (0, outSeed)
-        10 -> ((eDamage enemy*2)-armour player, outSeed)
-        _ -> (eDamage enemy-armour player, outSeed)
+        10 -> legalizeDamage ((eDamage enemy*2)-armour player, outSeed)
+        _ -> legalizeDamage (eDamage enemy-armour player, outSeed)
 
 playerDamage :: Enemy -> Player -> StdGen -> (Int, StdGen)
 playerDamage enemy player inSeed = do
     let (hitReg, outSeed) = randomR (0, 10) inSeed :: (Int, StdGen) -- Check hit
     case hitReg of
         0 -> (0, outSeed)
-        10 -> ((weapon player*2)-eArmour enemy, outSeed)
-        _ -> (weapon player-eArmour enemy, outSeed)
+        10 -> legalizeDamage ((weapon player*2)-eArmour enemy, outSeed)
+        _ -> legalizeDamage (weapon player-eArmour enemy, outSeed)
+
+legalizeDamage :: (Int, StdGen) -> (Int, StdGen)
+legalizeDamage (damage,seed)
+    | damage <= 0 = (1,seed)
+    | otherwise = (damage,seed)

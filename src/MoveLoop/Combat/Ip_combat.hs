@@ -2,7 +2,7 @@ module MoveLoop.Combat.Ip_combat where
 import Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
-import MoveLoop.Combat.CombatText (killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
+import MoveLoop.Combat.CombatText (missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
 import TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp)
 import Data.Char (toLower)
@@ -39,8 +39,12 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
             'a' -> do 
                 let (dealtDamage, outSeed) = playerDamage enemy player inSeed
                 clearConsole
-                pDamagePrint player dealtDamage
-                checkDeath player enemy 2 (lEhp+dealtDamage, lPhp) dataMap outSeed
+                if dealtDamage == 0 then do
+                    putStrLn (name player++missedAttack)
+                    checkDeath player enemy 2 (lEhp, lPhp) dataMap outSeed
+                else do
+                    pDamagePrint player dealtDamage
+                    checkDeath player enemy 2 (lEhp+dealtDamage, lPhp) dataMap outSeed
             'h' -> do
                 if 0 < healpot player then do
                     let healedPlayer = healPlayer (updateHeal player (-1))
@@ -53,8 +57,12 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
             _ -> combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
     | phase == 2 = do   --Enemy attack
         let (takenDamage, outSeed) = enemyDamage enemy player inSeed
-        eDamagePrint enemy takenDamage
-        checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap outSeed
+        if takenDamage == 0 then do
+            putStrLn ("The "++eName enemy++missedAttack)
+            checkDeath player enemy 1 (lEhp, lPhp) dataMap outSeed
+        else do
+            eDamagePrint enemy takenDamage
+            checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap outSeed
     | phase == 8 = do   --Free escape
         putStrLn escape
         pInput <- getLine
@@ -85,22 +93,16 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
 printHp :: String -> String -> Int -> Int  -> IO ()
 printHp name1 name2 hp1 hp2 = do
     putStr "+"
-    printLine 47
+    printLine 45
     putStr "| "
     putStr (name1++": ")
     printOneUsercontent " " (20-length name1)
     putStr (name2++": ")
     printOneUsercontent " " (20-length name2)
-    putStrLn " "
-    putStr "| "
-    printOneUsercontent "|" hp1
-    printOneUsercontent " " (20-hp1)
-    printOneUsercontent "|" hp2
-    printOneUsercontent " " (20-hp2)
-    putStrLn " "
+    putStrLn "| "
+    printHpBars hp1 hp2
     putStr "+"
-    printLine 47
-
+    printLine 45
 
 printLine :: Int -> IO ()
 printLine 0 = putStrLn "+"
@@ -108,23 +110,30 @@ printLine count = do
     putStr "-"
     printLine (count-1)
 
-
 printOneUsercontent :: String -> Int -> IO ()
-printOneUsercontent _ 0 = putStr "| "
+printOneUsercontent _ 0 = putStr ""
 printOneUsercontent symbol count = do
-    if count < 0 then putStr "| "
+    if count < 0 then putStr ""
     else do
         putStr symbol
         printOneUsercontent symbol (count-1)
 
+printHpBars :: Int -> Int -> IO ()
+printHpBars bar1 bar2 = do
+    putStrLn ""
+    printOneUsercontent "|" bar1
+    printOneUsercontent " " (20-bar1)
+    printOneUsercontent "|" bar2
+    printOneUsercontent " " (20-bar2)
+    if 0 <= (bar1-20) || 0 <= (bar2-20) then do
+        printHpBars (bar1-20) (bar2-20)
+    else putStrLn ""
 
 pDamagePrint :: Player -> Int -> IO ()
 pDamagePrint player damage = putStrLn (name player++" attacks, and deals "++show damage++"!")
 
-
 eDamagePrint :: Enemy -> Int -> IO ()
 eDamagePrint enemy damage = putStrLn("The "++eName enemy++" attacks, and deals "++show damage++"!")
-
 
 --Redirects to next combat stage or to correct death stage if someone died
 checkDeath :: Player -> Enemy -> Int -> (Int,Int) -> [[Int]] -> StdGen -> IO (Player, [[Int]], StdGen, Int)

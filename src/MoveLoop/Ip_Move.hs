@@ -27,6 +27,7 @@ moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
                 's' -> handleDirInput player 3 prevDir (pposX-1, pposY) exploredMap (unexploredMap, inSeed)
                 --Move right
                 'd' -> handleDirInput player 4 prevDir (pposX,pposY+1) exploredMap (unexploredMap, inSeed)
+                'q' -> return (player, exploredMap, unexploredMap, inSeed, 0)
                 _ -> do
                     putStrLn "Illegal input."
                     moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
@@ -40,14 +41,14 @@ moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
                 return (player, exploredMap, unexploredMap, inSeed, boardTile)
             4 -> do
                 --ENTER LOOT LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
+                moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed) 
             5 -> do
                 --ENTER ENCOUNTER LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
+                moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed) 
             100 -> do
                 --EXIT LEVEL
                 return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            _ -> return (player, exploredMap, unexploredMap, inSeed, boardTile) -- Tile is empty
+            _ -> moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed)  -- Tile is empty
     | otherwise = return (player, exploredMap, unexploredMap, inSeed, -99)-- Exit due to error
 
 -- SIZE OF MAP, MAP, DESIGNED TO PRINT MOVED PLAYER PATH

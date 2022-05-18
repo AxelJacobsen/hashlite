@@ -64,6 +64,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         (newPlayer, newlyExploredMap, dataMap, newSeed, boardTile) <- moveLoop player 0 (prevDir player) exploredMap (board,inSeed)
         case boardTile of
             -99 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)      --ERROR
+            0 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --Quit FUNCTION
             3 -> do                                                             --COMBAT
                 (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop newPlayer 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
                 if result == 0 then do
@@ -88,6 +89,6 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
                 'n' -> gameLoop player 0 exploredMap (board,inSeed)
                 _ -> gameLoop player 3 exploredMap (board,inSeed)
         else gameLoop player 3 exploredMap (board,inSeed)
-    | turnStep == 4 = do
+    | turnStep == 4 = do    --You died
         putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     | otherwise = putStrLn "ERROR IN GAME LOOP"

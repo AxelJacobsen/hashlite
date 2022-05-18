@@ -38,6 +38,7 @@ library
       MoveLoop.Loot.Ip_loot
       MoveLoop.Loot.P_loot
       MoveLoop.P_Move
+      Public.Ip_publicFuncs
       Public.P_publicFuncs
       Public.P_updatePlayer
       Structs

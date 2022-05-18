@@ -9,8 +9,8 @@ generateCharacter name = Player {
     name = name,
     maxHp=5,    --Initialized with little HP because its immediatily increased
     hp=5,
-    weapon  = 1,
-    armour  = 1,
+    weapon  = 3,
+    armour  = 2,
     healpot = 1,
     money   = 10,
     lowestLayer = 0,
@@ -27,17 +27,17 @@ placeStartEnd size isVisible (map, inseed) = do
     let randomLower = calcLower (size-1) 0.1
     let (startX, seedOne) = randomR (randomLower, size-1) inseed :: (Int, StdGen) --Generates starting position X
     let (startY, seedTwo) = randomR (randomLower, size-1) seedOne :: (Int, StdGen) --Generates starting position Y
-    let (endX , seedThree) = randomR (1, size-1) seedTwo :: (Int, StdGen) --Generates exit position X
+    let (endX , seedThree) = randomR (0, size-2) seedTwo :: (Int, StdGen) --Generates exit position X
     --let mapWithStart = setStartRec (startX, startY) map ([[]], outSeed)
     let mapWithStart = setMarkerEntry (startX, startY) (size-1, size) 99 map [[]]
 
     if isVisible then (mapWithStart, inseed, startX, startY)
     else do
         if startY < size `div` 2 then do
-            let (endY, outSeed) = randomR (size-1 `div` 2, size-1) seedThree :: (Int, StdGen)
+            let (endY, outSeed) = randomR (size-1 `div` 2, size-2) seedThree :: (Int, StdGen)
             (setMarkerEntry (endX, endY) (size-1, size) 100 mapWithStart [[]], outSeed, endX, endY)
         else do
-            let (endY, outSeed) = randomR (floor 1, (size-1)`div`2) seedThree :: (Int, StdGen)
+            let (endY, outSeed) = randomR (1, (size-1)`div`2) seedThree :: (Int, StdGen)
             (setMarkerEntry (endX, endY) (size-1, size) 100 mapWithStart [[]] , outSeed, endX, endY)
 
 --Inserts start and end marker into map 

@@ -8,32 +8,32 @@ generateEnemy :: StdGen -> Int -> (Enemy, StdGen)
 generateEnemy inSeed typeCap = do
         let (enemyType, strengthSeed) = randomR (0, typeCap) inSeed :: (Int, StdGen) -- Generate enemy
         let (enemyStrength, outSeed) = randomR (1, 3) strengthSeed :: (Int, StdGen) -- Generate enemy strength
-        (generateEnemyInner enemyType enemyStrength, outSeed)
+        (generateEnemyInner enemyType enemyStrength typeCap, outSeed)
 
-generateEnemyInner :: Int -> Int -> Enemy
-generateEnemyInner enemyType statRng    --Enemy type will always be between 0 - and current player layer depth
+generateEnemyInner :: Int -> Int -> Int -> Enemy
+generateEnemyInner enemyType statRng layer    --Enemy type will always be between 0 - and current player layer depth
+    | layer == 100 = genOddvarBraa statRng
     | enemyType <= 0 = genSlime statRng
     | enemyType <= 3 = genGoblin statRng
     | enemyType <= 6 = genOrc statRng
     | enemyType <= 15 = genDrake statRng
     | enemyType <= 40 = genAbomination statRng
-    | enemyType == 100 = genOddvarBraa statRng
     | otherwise = genAbomination statRng
 
 --Generates a slime type enemy
 genSlime :: Int -> Enemy
 genSlime 0 = genSlime 1
-genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 3*rng, eDamage = 1, eArmour = rng, eDrops = rng+1, expDrop = 1}
+genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 4+3*rng, eDamage = 1, eArmour = rng, eDrops = rng+1, expDrop = 1}
 
 --Generates a goblin type enemy
 genGoblin :: Int -> Enemy
 genGoblin 0 = genGoblin 1
-genGoblin rng = Enemy{prefix = "a ", eName = "Goblin", eMaxHp = 2*rng, eDamage = 2+rng, eArmour = rng-1, eDrops = rng+2, expDrop = 2}
+genGoblin rng = Enemy{prefix = "a ", eName = "Goblin", eMaxHp = 8+2*rng, eDamage = 2+rng, eArmour = rng-1, eDrops = rng+2, expDrop = 2}
 
 --Generates an Orc type enemy
 genOrc :: Int -> Enemy
 genOrc 0 = genOrc 1
-genOrc rng = Enemy{prefix = "an ", eName = "Orc", eMaxHp = 10+(3*rng), eDamage = 6+(2*rng), eArmour = 2+rng*2, eDrops = (rng*5)+10, expDrop = 5}
+genOrc rng = Enemy{prefix = "an ", eName = "Orc", eMaxHp = 12+(3*rng), eDamage = 6+(2*rng), eArmour = 2+rng*2, eDrops = (rng*5)+10, expDrop = 5}
 
 -- Generates a drake type enemy
 genDrake :: Int -> Enemy

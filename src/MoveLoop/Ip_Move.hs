@@ -8,11 +8,11 @@ import Public.P_updatePlayer (updatePos, updatePrevdir)
 import MoveLoop.P_Move(checkForLegalMove,checkTileValue)
 
 moveLoop :: Player -> Int -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
-moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
+moveLoop player phase prevDir exploredMap (dataMap, inSeed)
     | phase == 0 = do-- Display Move Options and map
         putStrLn moveSymbols
         displayMap (length exploredMap) exploredMap
-        moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
+        moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
     | phase == 1 = do
         putStrLn moveOptions
         moveDir <- getLine
@@ -20,36 +20,36 @@ moveLoop player phase prevDir exploredMap (unexploredMap, inSeed)
         if not (null moveDir) then do
             case toLower (head moveDir) of
                 --Move up
-                'w' -> handleDirInput player 1 prevDir (pposX+1,pposY) exploredMap (unexploredMap, inSeed)
+                'w' -> handleDirInput player 1 prevDir (pposX+1,pposY) exploredMap (dataMap, inSeed)
                 --Move Left
-                'a' -> handleDirInput player 2 prevDir (pposX,pposY-1) exploredMap (unexploredMap, inSeed)
+                'a' -> handleDirInput player 2 prevDir (pposX,pposY-1) exploredMap (dataMap, inSeed)
                 --Move down
-                's' -> handleDirInput player 3 prevDir (pposX-1, pposY) exploredMap (unexploredMap, inSeed)
+                's' -> handleDirInput player 3 prevDir (pposX-1, pposY) exploredMap (dataMap, inSeed)
                 --Move right
-                'd' -> handleDirInput player 4 prevDir (pposX,pposY+1) exploredMap (unexploredMap, inSeed)
-                'q' -> return (player, exploredMap, unexploredMap, inSeed, 0)
+                'd' -> handleDirInput player 4 prevDir (pposX,pposY+1) exploredMap (dataMap, inSeed)
+                'q' -> return (player, exploredMap, dataMap, inSeed, 0)
                 _ -> do
                     putStrLn "Illegal input."
-                    moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
-            else moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
+                    moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
+            else moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
     | phase == 2 = do
-        let boardTile = checkTileValue (playerPos player) unexploredMap
+        let boardTile = checkTileValue (playerPos player) dataMap
         case boardTile of
-            -99 -> moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed) --Error on tile, illegal pos
+            -99 -> moveLoop player 1 prevDir exploredMap (dataMap, inSeed) --Error on tile, illegal pos
             3 -> do
                 --ENTER COMBAT LOOP
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
+                return (player, exploredMap, dataMap, inSeed, boardTile)
             4 -> do
                 --ENTER LOOT LOOP
-                moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed) 
+                moveLoop player 0 prevDir exploredMap (dataMap, inSeed) 
             5 -> do
                 --ENTER ENCOUNTER LOOP
-                moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed) 
+                moveLoop player 0 prevDir exploredMap (dataMap, inSeed) 
             100 -> do
                 --EXIT LEVEL
-                return (player, exploredMap, unexploredMap, inSeed, boardTile)
-            _ -> moveLoop player 0 prevDir exploredMap (unexploredMap, inSeed)  -- Tile is empty
-    | otherwise = return (player, exploredMap, unexploredMap, inSeed, -99)-- Exit due to error
+                return (player, exploredMap, dataMap, inSeed, boardTile)
+            _ -> moveLoop player 0 prevDir exploredMap (dataMap, inSeed)  -- Tile is empty
+    | otherwise = return (player, exploredMap, dataMap, inSeed, -99)-- Exit due to error
 
 -- SIZE OF MAP, MAP, DESIGNED TO PRINT MOVED PLAYER PATH
 displayMap :: Int -> [[Int]] -> IO()
@@ -151,7 +151,7 @@ printLines count = do putStr "---" ; printLines (count-1)
 
 
 handleDirInput :: Player -> Int -> Int -> (Int,Int) -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
-handleDirInput player piece prevDir (newX, newY) exploredMap (unexploredMap, inSeed) = do
+handleDirInput player piece prevDir (newX, newY) exploredMap (dataMap, inSeed) = do
     let (newMap,isLegal) = checkForLegalMove (newX,newY) 88 exploredMap inSeed
     if isLegal then do
         let newPlayer = updatePos player newX newY
@@ -159,8 +159,8 @@ handleDirInput player piece prevDir (newX, newY) exploredMap (unexploredMap, inS
         if playerPos player /= start player then do--Sets old position to be directional piece, but only if not startpos
             let (outMap,isLegal) = checkForLegalMove (playerPos player) ((piece*10)+prevDir) newMap inSeed
             print ((piece*10)+prevDir)
-            moveLoop outPlayer 2 piece outMap (unexploredMap, inSeed)
-        else moveLoop outPlayer 2 piece newMap (unexploredMap, inSeed)
+            moveLoop outPlayer 2 piece outMap (dataMap, inSeed)
+        else moveLoop outPlayer 2 piece newMap (dataMap, inSeed)
     else do
         putStrLn moveIllegal
-        moveLoop player 1 prevDir exploredMap (unexploredMap, inSeed)
+        moveLoop player 1 prevDir exploredMap (dataMap, inSeed)

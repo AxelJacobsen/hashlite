@@ -2,7 +2,7 @@ module MoveLoop.Combat.Ip_combat where
 import Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
-import MoveLoop.Combat.CombatText (critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
+import MoveLoop.Combat.CombatText (oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack, critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
 import TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp)
 import Data.Char (toLower)
@@ -57,11 +57,13 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
     
     | phase == 2 = do                                       --Enemy attack
         let (takenDamage, outSeed, crit) = enemyDamage enemy player inSeed
-        let hasCrit = if crit then putStrLn critHit else putStr ""
+        let hasCrit = if crit then putStrLn critHit ; else putStr ""
         let hasMissed = if takenDamage == 0 then putStrLn ("The "++eName enemy++missedAttack) else eDamagePrint enemy takenDamage
+        let odd = if lowestLayer player == 100 then if crit then printBossTalk 1 outSeed else if takenDamage == 0 then printBossTalk (-1) outSeed else printBossTalk 0 outSeed ; else return outSeed
         hasCrit
         hasMissed
-        checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap outSeed
+        oddSeed <- odd
+        checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap oddSeed
     
     | phase == 8 = do                                       --Free escape
         putStrLn escape
@@ -124,17 +126,17 @@ printHpBars bar1 bar2 = do
     putStrLn ""
     putStr "| "
     let pHasHP
-            | 21 <= bar1 = do printOneUsercontent "|" bar1 ; putStr ""
+            | 22 <= bar1 = do printOneUsercontent "|" 22 ; putStr ""
             | 0 < bar1 = do printOneUsercontent "|" bar1 ; printOneUsercontent " " (20-bar1)
-            | otherwise = do putStr "" ; printOneUsercontent " " (22-bar1)
+            | otherwise = do putStr "" ; printOneUsercontent " " 22
     pHasHP
     let eHasHP
-            | 21 <= bar2 = do printOneUsercontent "|" bar2 ; putStr ""
+            | 22 <= bar2 = do printOneUsercontent "|" 22 ; putStr ""
             | 0 < bar2 = do printOneUsercontent "|" bar2 ; printOneUsercontent " " (20-bar2)
-            | otherwise = do putStr "" ; printOneUsercontent " " (22-bar2)
+            | otherwise = do putStr "" ; printOneUsercontent " " 22
     eHasHP
-    if 0 <= (bar1-20) || 0 <= (bar2-20) then do
-        printHpBars (bar1-20) (bar2-20)
+    if 0 <= (bar1-22) || 0 <= (bar2-22) then do
+        printHpBars (bar1-22) (bar2-22)
     else putStrLn ""
 
 pDamagePrint :: Player -> Int -> IO ()
@@ -149,3 +151,19 @@ checkDeath player enemy nextPhase (lEhp, lPhp) dataMap passSeed
     | hp player - lPhp <= 0 = combatLoop player 10 (lEhp, lPhp) dataMap (enemy, passSeed)
     | eMaxHp enemy - lEhp <= 0 = combatLoop player 11 (lEhp, lPhp) dataMap (enemy, passSeed)
     | otherwise = combatLoop player nextPhase (lEhp, lPhp) dataMap (enemy, passSeed)
+-- oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack,
+printBossTalk :: Int -> StdGen -> IO StdGen
+printBossTalk hitType inSeed
+    | hitType == -1 = do 
+        let (index, outSeed) = randomR (0, length oddVarMiss -1) inSeed :: (Int, StdGen)
+        putStrLn (oddVarMiss!!index)
+        return outSeed
+    | hitType == 0 = do 
+        let (index, outSeed) = randomR (0, length oddVarAttack -1) inSeed :: (Int, StdGen)
+        putStrLn (oddVarAttack!!index)
+        return outSeed
+    | hitType == 1 = do 
+        let (index, outSeed) = randomR (0, length oddVarCrit -1) inSeed :: (Int, StdGen)
+        putStrLn (oddVarCrit!!index)
+        return outSeed
+    | otherwise = return inSeed

@@ -85,6 +85,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == 6 = combatHandler player exploredMap board inSeed --Initiates combat, seperated so that rest can trigger it aswell
     | otherwise = putStrLn "ERROR IN GAME LOOP"
 
+
 combatHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
 combatHandler player exploreMap dataMap inSeed = do
     (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop player 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
@@ -96,6 +97,7 @@ combatHandler player exploreMap dataMap inSeed = do
             gameLoop leveledPlayer 0 exploreMap (updatedDataMap, loopSeed)
         1 -> do gameLoop loopPlayer 4 exploreMap (updatedDataMap, loopSeed)
         _ -> do gameLoop loopPlayer 0 exploreMap (updatedDataMap, loopSeed)
+
 
 restHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
 restHandler player exploredMap dataMap inSeed = do

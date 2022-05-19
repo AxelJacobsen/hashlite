@@ -3,7 +3,6 @@ module Public.P_updatePlayer (levelUp, incrementExp, newLayer, increaseMaxHp, up
 import Structs
 
 -- I Honeslty wish i found a better method for this, but such is life and Haskell :(
-
 increaseMaxHp :: Player -> Int -> Player
 increaseMaxHp inPlayer change = Player      (name inPlayer) change           (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer) (levelCap inPlayer)
 

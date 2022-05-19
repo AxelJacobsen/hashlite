@@ -1,4 +1,4 @@
-module TextGeneral (levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
+module TextGeneral (wantRest, restDanger, restNormal, restSafe, levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
 -- General text
 
 pressEnter = "Welcome! press enter to start!"
@@ -18,3 +18,7 @@ outOfHeal = "You are out of healing potions!"
 continue = "Press enter to continue..."
 levelUp1 = "You have leveled up, "
 levelUp2 = "! MAXHP increased.\nDo you want to;\n(s) Sharpen your sword,\n(a) Strengthen your armour?"
+restSafe = "You feel safe here..."
+restNormal = "There isn't anyone around..."
+restDanger = "You feel as if you are being watched..."
+wantRest = "\nDo you want to rest? (y/n):"

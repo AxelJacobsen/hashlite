@@ -17,6 +17,7 @@ generateEnemyInner enemyType statRng    --Enemy type will always be between 0 - 
     | enemyType <= 6 = genOrc statRng
     | enemyType <= 15 = genDrake statRng
     | enemyType <= 40 = genAbomination statRng
+    | enemyType == 100 = genOddvarBraa statRng
     | otherwise = genAbomination statRng
 
 --Generates a slime type enemy
@@ -43,6 +44,12 @@ genDrake rng = Enemy{prefix = "a ", eName = "Drake", eMaxHp = 30+(16*rng), eDama
 genAbomination :: Int -> Enemy
 genAbomination 0 = genAbomination 1
 genAbomination rng = Enemy{prefix = "an ", eName = "Abomination", eMaxHp = 100+(30*rng), eDamage = 25+(12*rng), eArmour = 16+(10*rng), eDrops = (rng*100)+100, expDrop = 20}
+
+-- Generates Oddvar Braa
+genOddvarBraa :: Int -> Enemy
+genOddvarBraa 0 = genOddvarBraa 1
+genOddvarBraa rng = Enemy{prefix = "", eName = "Oddvar Braa", eMaxHp = 1000+(100*rng), eDamage = 100+(30*rng), eArmour = 10+(10*rng), eDrops = 2766342, expDrop = 1000}
+
 
 enemyDamage :: Enemy -> Player -> StdGen -> (Int, StdGen, Bool)
 enemyDamage enemy player inSeed = do

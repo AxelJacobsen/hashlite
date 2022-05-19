@@ -5,7 +5,7 @@ import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import System.Directory(doesFileExist)
 import Control.Monad
 import MainLoop.P_mainLoop(checkLegalIdleChoice)
-import TextGeneral (levelUp1,levelUp2, continue,idleOptionsOne,idleOptionsTwo, exitGame, enterName,playerDeath1,playerDeath2,playerDeath3,playerDeath4)
+import TextGeneral (wantRest, restDanger, restNormal, restSafe, levelUp1,levelUp2, continue,idleOptionsOne,idleOptionsTwo, exitGame, enterName,playerDeath1,playerDeath2,playerDeath3,playerDeath4)
 import Consts ( idleOptionsList, playerNamePath)
 import Data.Char
 import Initialization.Impure.Ip_initChar (genNewFile)
@@ -15,6 +15,7 @@ import MoveLoop.Ip_Move(moveLoop)
 import MoveLoop.Combat.P_combat(generateEnemy)
 import MoveLoop.Combat.Ip_combat(combatLoop)
 import Public.P_updatePlayer (incrementExp, updatePos, newLayer)
+import Public.P_publicFuncs (healPlayer)
 import Public.Ip_publicFuncs(checkLevelUp)
 
 -- Main Loop
@@ -61,23 +62,12 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         case boardTile of
             -99 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)      --ERROR
             0 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --Quit FUNCTION
-            3 -> do                                                             --COMBAT
-                (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop newPlayer 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
-                case result of
-                    0 -> do
-                        leveledPlayer <- checkLevelUp loopPlayer
-                        putStrLn "Press enter to continue..."
-                        trash <- getLine
-                        gameLoop leveledPlayer 0 newlyExploredMap (updatedDataMap, loopSeed)
-                    1 -> gameLoop loopPlayer 4 newlyExploredMap (updatedDataMap, loopSeed) 
-                    _ -> gameLoop loopPlayer 0 newlyExploredMap (updatedDataMap, loopSeed) 
+            3 -> gameLoop newPlayer 6 newlyExploredMap (dataMap,newSeed)        --COMBAT
             4 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --LOOT
             5 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ENCOUNTER
             100 -> gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)   --NEXT LEVEL
             _ -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ALSO ERROR, SHOULDNT HAPPEN
-    | turnStep == 2 = do
-        print "REST LOOP"
-        gameLoop player 0 exploredMap (board,inSeed)
+    | turnStep == 2 = restHandler player exploredMap board inSeed
     | turnStep == 3 = do
         putStrLn exitGame
         answer <- getLine
@@ -89,4 +79,48 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         else gameLoop player 3 exploredMap (board,inSeed)
     | turnStep == 4 = do    --You died
         putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
+    | turnStep == 5 = do    --Oddvar has been defeated
+        putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
+    
+    | turnStep == 6 = combatHandler player exploredMap board inSeed --Initiates combat, seperated so that rest can trigger it aswell
     | otherwise = putStrLn "ERROR IN GAME LOOP"
+
+combatHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
+combatHandler player exploreMap dataMap inSeed = do
+    (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop player 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
+    case result of
+        0 -> do
+            leveledPlayer <- checkLevelUp loopPlayer
+            putStrLn "Press enter to continue..."
+            trash <- getLine
+            gameLoop leveledPlayer 0 exploreMap (updatedDataMap, loopSeed)
+        1 -> do gameLoop loopPlayer 4 exploreMap (updatedDataMap, loopSeed)
+        _ -> do gameLoop loopPlayer 0 exploreMap (updatedDataMap, loopSeed)
+
+restHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
+restHandler player exploredMap dataMap inSeed = do
+    let (getAttacked, nextSeed) = randomR (1, 4) inSeed :: (Int, StdGen)
+    let (perception, outSeed) = randomR (1, 10) nextSeed :: (Int, StdGen)
+    restMaybe <- restPrinter player getAttacked perception
+    let (sleepPlayer, _) = if restMaybe then healPlayer (player, 0) else (player, 0)
+    if getAttacked == 1 then combatHandler sleepPlayer exploredMap dataMap outSeed
+    else gameLoop sleepPlayer 0 exploredMap (dataMap,outSeed)
+    
+restPrinter :: Player -> Int -> Int -> IO Bool
+restPrinter player getAttacked perception = do
+    let restMaybe = if 5 < perception then do
+            let danger
+                    | getAttacked == 1 = putStrLn restDanger
+                    | otherwise = putStrLn restSafe
+            danger
+        else do
+            putStrLn restNormal
+    restMaybe
+    putStrLn wantRest
+    wantRest <- getLine
+    if not (null wantRest) then do
+        case toLower (head wantRest) of
+            'y' -> return True
+            'n' -> return False
+            _ -> restPrinter player getAttacked perception
+    else restPrinter player getAttacked perception

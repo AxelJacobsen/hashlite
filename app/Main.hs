@@ -12,7 +12,7 @@ import Data.Char(toLower)
 
 main :: IO ()
 main = do
-    needHelp <- getArgs
+    needHelp <- getArgs 
     let acceptAbleOptions = ["--help","-help","help","--h","-h","h"]
     let getHelp = if not (null needHelp) && (map toLower (head needHelp) `elem` acceptAbleOptions) then do putStrLn (helpFlag1++helpFlag2++helpFlag3) ; putStrLn continue ; _ <- getLine; putStr "" else putStr ""
     getHelp

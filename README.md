@@ -9,3 +9,9 @@ Untill further notice to map will be balanced around a 10x10 size, though any si
 
 ## Changelogs
 Might add merchants as alternate character encounter.
+
+# Spoiler
+<br /><br />
+The bossfight is a refrence to the famous Norwegian gold-medalist Oddvar Brå.<br />
+I couldnt get myself to translate his frases as they simply arent funny in english.<br />
+It was never intended for anyone to actually reach the bottom, and he exists more as an easteregg than and actual boss.<br />

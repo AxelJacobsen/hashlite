@@ -20,7 +20,7 @@ updateHeal :: Player -> Int -> Player
 updateHeal inPlayer change = Player         (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer+change) (money inPlayer) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer) (levelCap inPlayer)
 
 updateMoney :: Player -> Int -> Player
-updateMoney inPlayer change = Player        (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) change (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer) (levelCap inPlayer)
+updateMoney inPlayer change = Player        (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer+change) (lowestLayer inPlayer) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer) (levelCap inPlayer)
 
 updateLayer :: Player -> Player
 updateLayer inPlayer = Player               (name inPlayer) (maxHp inPlayer) (hp inPlayer) (weapon inPlayer) (armour inPlayer) (healpot inPlayer) (money inPlayer) (lowestLayer inPlayer+1) (playerPos inPlayer) (goal inPlayer) (start inPlayer) (prevDir inPlayer) (pExp inPlayer) (levelCap inPlayer)

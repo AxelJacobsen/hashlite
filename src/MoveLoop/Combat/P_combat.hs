@@ -7,8 +7,8 @@ import System.Random (Random(randomR), StdGen)
 generateEnemy :: StdGen -> Int -> (Enemy, StdGen)
 generateEnemy inSeed typeCap = do
         let (enemyType, strengthSeed) = randomR (0, typeCap) inSeed :: (Int, StdGen) -- Generate enemy
-        let (enemyStrength, outSeed) = randomR (0, 4) strengthSeed :: (Int, StdGen) -- Generate enemy strength
-        (generateEnemyInner enemyType enemyStrength,outSeed)
+        let (enemyStrength, outSeed) = randomR (1, 3) strengthSeed :: (Int, StdGen) -- Generate enemy strength
+        (generateEnemyInner enemyType enemyStrength, outSeed)
 
 generateEnemyInner :: Int -> Int -> Enemy
 generateEnemyInner enemyType statRng    --Enemy type will always be between 0 - and current player layer depth
@@ -22,7 +22,7 @@ generateEnemyInner enemyType statRng    --Enemy type will always be between 0 - 
 --Generates a slime type enemy
 genSlime :: Int -> Enemy
 genSlime 0 = genSlime 1
-genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 3*rng, eDamage = rng, eArmour = rng, eDrops = rng, expDrop = 1}
+genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 3*rng, eDamage = 1, eArmour = rng, eDrops = rng+1, expDrop = 1}
 
 --Generates a goblin type enemy
 genGoblin :: Int -> Enemy
@@ -32,17 +32,17 @@ genGoblin rng = Enemy{prefix = "a ", eName = "Goblin", eMaxHp = 2*rng, eDamage =
 --Generates an Orc type enemy
 genOrc :: Int -> Enemy
 genOrc 0 = genOrc 1
-genOrc rng = Enemy{prefix = "an ", eName = "Orc", eMaxHp = 6*rng, eDamage = 2*rng, eArmour = rng*2, eDrops = rng*5, expDrop = 5}
+genOrc rng = Enemy{prefix = "an ", eName = "Orc", eMaxHp = 10+(3*rng), eDamage = 6+(2*rng), eArmour = 2+rng*2, eDrops = (rng*5)+10, expDrop = 5}
 
 -- Generates a drake type enemy
 genDrake :: Int -> Enemy
 genDrake 0 = genDrake 1
-genDrake rng = Enemy{prefix = "a ", eName = "Drake", eMaxHp = 16*rng, eDamage = 6*rng, eArmour = 8*rng, eDrops = rng*20, expDrop = 10}
+genDrake rng = Enemy{prefix = "a ", eName = "Drake", eMaxHp = 30+(16*rng), eDamage = 12+(6*rng), eArmour = 10+(8*rng), eDrops = (rng*20)+20, expDrop = 10}
 
 -- Generates an abomination
 genAbomination :: Int -> Enemy
 genAbomination 0 = genAbomination 1
-genAbomination rng = Enemy{prefix = "an ", eName = "Abomination", eMaxHp = 30*rng, eDamage = 12*rng, eArmour = 10*rng, eDrops = rng*100, expDrop = 20}
+genAbomination rng = Enemy{prefix = "an ", eName = "Abomination", eMaxHp = 100+(30*rng), eDamage = 25+(12*rng), eArmour = 16+(10*rng), eDrops = (rng*100)+100, expDrop = 20}
 
 enemyDamage :: Enemy -> Player -> StdGen -> (Int, StdGen, Bool)
 enemyDamage enemy player inSeed = do

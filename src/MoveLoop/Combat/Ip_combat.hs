@@ -9,7 +9,7 @@ import Data.Char (toLower)
 import Public.P_publicFuncs(healPlayer)
 import Public.Ip_publicFuncs(clearConsole)
 import MoveLoop.Combat.P_combat(enemyDamage,playerDamage)
-
+import MoveLoop.P_Move(checkForLegalMove)
 -- I want this to go right into the loop to skip unecessary nests
 -- therefore creature type has to be predecided
 combatLoop :: Player -> Int -> (Int,Int) -> [[Int]] -> (Enemy, StdGen) -> IO (Player, [[Int]], StdGen, Int)
@@ -29,7 +29,7 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
                 putStrLn coinNeutral
                 combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
     | phase == 1 = do   --Player Turn
-        printHp (name player) (eName enemy) (maxHp player-lPhp) (eMaxHp enemy-lEhp)
+        printHp (name player) (eName enemy) (hp player-lPhp) (eMaxHp enemy-lEhp)
         putStr combatOptions1
         putStr (show (healpot player))
         putStrLn combatOptions2
@@ -80,12 +80,14 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
             let escapePlayer = updateHp player lPhp
             return (escapePlayer, dataMap, outSeed, 0)
     | phase == 10 = do  --Quit loop, player death
-        printHp (name player) (eName enemy) (maxHp player-lPhp) (eMaxHp enemy-lEhp)
+        printHp (name player) (eName enemy) (hp player-lPhp) (eMaxHp enemy-lEhp)
         return (player, dataMap, inSeed, 1)
     | phase == 11 = do  --Quit loop, enemy killed
-        printHp (name player) (eName enemy) (maxHp player-lPhp) 0
+        printHp (name player) (eName enemy) (hp player-lPhp) 0
         putStrLn (name player++killedEnemy1++eName enemy++killedEnemy2++show (eDrops enemy)++killedEnemy3++show (expDrop enemy)++killedEnemy4)
-        return (updateHp (updateMoney (incrementExp player (expDrop enemy))  (eDrops enemy)) (-lPhp), dataMap, inSeed, 0)
+        let (removedEnemyMap, isLegal) = checkForLegalMove( playerPos player) 0 dataMap inSeed
+        if isLegal then return (updateHp (updateMoney (incrementExp player (expDrop enemy))  (eDrops enemy)) (-lPhp), removedEnemyMap, inSeed, 0)
+        else return (updateHp (updateMoney (incrementExp player (expDrop enemy))  (eDrops enemy)) (-lPhp), dataMap, inSeed, 0)
     | otherwise = return (player, dataMap, inSeed, -1)-- Exit due to error
 
 printHp :: String -> String -> Int -> Int  -> IO ()
@@ -119,19 +121,23 @@ printHpBars :: Int -> Int -> IO ()
 printHpBars bar1 bar2 = do
     putStrLn ""
     putStr "| "
-    printOneUsercontent "|" bar1
-    printOneUsercontent " " (20-bar1)
-    printOneUsercontent "|" bar2
-    printOneUsercontent " " (20-bar2)
+    let pHasHP = if 0 < bar1 
+        then do printOneUsercontent "|" bar1 ; printOneUsercontent " " (20-bar1)
+        else do putStr "" ; printOneUsercontent " " (22-bar1)
+    pHasHP
+    let eHasHP = if 0 < bar2 
+        then do printOneUsercontent "|" bar2 ; printOneUsercontent " " (20-bar2)
+        else do putStr "" ; printOneUsercontent " " (22-bar2)
+    eHasHP
     if 0 <= (bar1-20) || 0 <= (bar2-20) then do
         printHpBars (bar1-20) (bar2-20)
     else putStrLn ""
 
 pDamagePrint :: Player -> Int -> IO ()
-pDamagePrint player damage = putStrLn (name player++" attacks, and deals "++show damage++"!")
+pDamagePrint player damage = putStrLn (name player++" attacks, and deals "++show damage++" damage!")
 
 eDamagePrint :: Enemy -> Int -> IO ()
-eDamagePrint enemy damage = putStrLn("The "++eName enemy++" attacks, and deals "++show damage++"!")
+eDamagePrint enemy damage = putStrLn("The "++eName enemy++" attacks, and deals "++show damage++" damage!")
 
 --Redirects to next combat stage or to correct death stage if someone died
 checkDeath :: Player -> Enemy -> Int -> (Int,Int) -> [[Int]] -> StdGen -> IO (Player, [[Int]], StdGen, Int)

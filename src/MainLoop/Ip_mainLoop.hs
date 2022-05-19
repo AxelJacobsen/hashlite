@@ -46,9 +46,6 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
             contents <- hGetContents handle
             let charNameFile = head (lines contents)
             let outPlayer = newLayer (generateCharacter charNameFile) (startX, startY) (goalX, goalY)
-            print (start outPlayer)
-            print (playerPos outPlayer)
-            print (goal outPlayer)
             gameLoop outPlayer 0 newExploredBoard (newFilledBoard,outSeed) --Player generated with file name
     --"MAIN MENU"
     | turnStep == 0 = do
@@ -68,12 +65,12 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
                 (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop newPlayer 0 (0,0) dataMap (generateEnemy inSeed (lowestLayer player))
                 case result of
                     0 -> do
-                        leveledPlayer <- checkLevelUp player
+                        leveledPlayer <- checkLevelUp loopPlayer
                         putStrLn "Press enter to continue..."
                         trash <- getLine
-                        gameLoop leveledPlayer 0 newlyExploredMap (updatedDataMap,loopSeed)
-                    1 -> gameLoop newPlayer 4 newlyExploredMap (updatedDataMap,loopSeed) 
-                    _ -> gameLoop newPlayer 0 newlyExploredMap (updatedDataMap,loopSeed) 
+                        gameLoop leveledPlayer 0 newlyExploredMap (updatedDataMap, loopSeed)
+                    1 -> gameLoop loopPlayer 4 newlyExploredMap (updatedDataMap, loopSeed) 
+                    _ -> gameLoop loopPlayer 0 newlyExploredMap (updatedDataMap, loopSeed) 
             4 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --LOOT
             5 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ENCOUNTER
             100 -> gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)   --NEXT LEVEL

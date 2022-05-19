@@ -1,4 +1,4 @@
-module MoveLoop.Combat.CombatText (critHit, missedAttack, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2, killedEnemy1, killedEnemy2, killedEnemy3, killedEnemy4) where
+module MoveLoop.Combat.CombatText (oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack, critHit, missedAttack, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2, killedEnemy1, killedEnemy2, killedEnemy3, killedEnemy4) where
 
 encounterEnemy = "You have encountered "
 coinSuccess = "It has not noticed you yet..."
@@ -19,3 +19,9 @@ killedEnemy3 = " gold.\n You gained: "
 killedEnemy4 = " exp!"
 missedAttack = " missed!"
 critHit = "Critical Hit!"
+
+oddVarAttack = ["Kor va du i -82?", "Pass på, ellers knekker æ dæ!", "Æ ska knækk dæ slik du aldri har vært knokke!"]
+oddVarCrit = ["Tygg på denna, halv-staf til tryne!"]
+oddVarMiss = ["FANJ, IKKJE IGJEN!"]
+oddvarTakeDmg = ["KOM OG KNÆKK!", "STÆL DÆ I KNÆKKEKØEN"]
+oddVarKills = "Du har vorte knokke..."

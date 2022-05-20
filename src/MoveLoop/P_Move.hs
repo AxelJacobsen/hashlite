@@ -20,4 +20,4 @@ checkTileValue (_, _) [[]] = -99
 checkTileValue (_, _) [] = -99
 checkTileValue (xpos, ypos) map
     | length map <= xpos || length map <= ypos || xpos < 0 || ypos < 0 = -99 --tile is within legal bounds
-    | otherwise = map!!xpos!!ypos
+    | otherwise = map!!((length map-1)-xpos)!!ypos --

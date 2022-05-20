@@ -12,8 +12,6 @@ moveLoop player phase prevDir exploredMap (dataMap, inSeed)
     | phase == 0 = do-- Display Move Options and map
         putStrLn moveSymbols
         displayMap (length exploredMap) exploredMap
-        print exploredMap
-        print dataMap
         moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
     | phase == 1 = do
         putStrLn moveOptions

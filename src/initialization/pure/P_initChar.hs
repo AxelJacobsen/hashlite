@@ -13,7 +13,7 @@ generateCharacter name = Player {
     armour  = 2,
     healpot = 3,
     money   = 10,
-    lowestLayer = 0,
+    lowestLayer = 99,
     playerPos = (0,0),
     start = (0,0),
     goal = (0,0),
@@ -31,7 +31,7 @@ placeStartEnd size isVisible (map, inseed) = do
     --let mapWithStart = setStartRec (startX, startY) map ([[]], outSeed)
     let mapWithStart = setMarkerEntry (startX, startY) (size-1, size) 99 map [[]]
 
-    if isVisible || length map == 100 then (mapWithStart, inseed, startX, startY)
+    if isVisible || length map == 99 then (mapWithStart, inseed, startX, startY)
     else do
         if startY < size `div` 2 then do
             let (endY, outSeed) = randomR (size-1 `div` 2, size-2) seedThree :: (Int, StdGen)

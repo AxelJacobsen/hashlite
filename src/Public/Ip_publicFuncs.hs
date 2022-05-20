@@ -3,6 +3,8 @@ import Public.Consts.Structs (Player (..))
 import Public.Consts.TextGeneral(levelUp1,levelUp2)
 import Data.Char (toLower)
 import Public.P_updatePlayer(levelUp)
+
+
 clearConsole :: IO ()
 clearConsole = printLineRec 50
 

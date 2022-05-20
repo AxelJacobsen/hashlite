@@ -85,7 +85,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         else gameLoop player 3 exploredMap (board,inSeed)
     
     | turnStep == 4 = do    --You died
-        putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
+        putStrLn ("Stats:\n"++name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     
     | turnStep == 5 = do    --Oddvar has been defeated
         putStrLn ("Stats:\n"++name player++bossDefeated++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)

@@ -3,7 +3,6 @@ module Main where
 import Initialization.Pure.P_MapGenerator (generateBoard, generateEmptyBoard)
 import Initialization.Pure.P_initChar (generateCharacter)
 import System.Random (mkStdGen, newStdGen)
-import Public.Consts.Structs (Player)
 import MainLoop.Ip_mainLoop (gameLoop)
 import System.IO
 import Public.Consts.TextGeneral(pressEnter, helpFlag1, helpFlag2, helpFlag3, continue)

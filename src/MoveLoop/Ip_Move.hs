@@ -145,7 +145,6 @@ handleDirInput player piece prevDir (newX, newY) exploredMap (dataMap, inSeed) =
         let outPlayer = updatePrevdir newPlayer piece
         if playerPos player /= start player then do--Sets old position to be directional piece, but only if not startpos
             let (outMap,isLegal) = checkForLegalMove (playerPos player) ((piece*10)+prevDir) newMap
-            print ((piece*10)+prevDir)
             moveLoop outPlayer 2 piece outMap (dataMap, inSeed)
         else moveLoop outPlayer 2 piece newMap (dataMap, inSeed)
     else do

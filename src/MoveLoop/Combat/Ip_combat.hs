@@ -154,6 +154,7 @@ checkDeath player enemy nextPhase (lEhp, lPhp) dataMap passSeed
     | hp player - lPhp <= 0 = combatLoop player 10 (lEhp, lPhp) dataMap (enemy, passSeed)
     | eMaxHp enemy - lEhp <= 0 = combatLoop player 11 (lEhp, lPhp) dataMap (enemy, passSeed)
     | otherwise = combatLoop player nextPhase (lEhp, lPhp) dataMap (enemy, passSeed)
+    
 -- oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack,
 printBossTalk :: Int -> StdGen -> IO StdGen
 printBossTalk hitType inSeed

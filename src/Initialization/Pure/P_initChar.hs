@@ -7,8 +7,8 @@ import Public.P_updatePlayer (updatePos)
 generateCharacter :: String -> Player
 generateCharacter name = Player {
     name = name,
-    maxHp=5,    --Initialized with little HP because its immediatily increased
-    hp=5,
+    maxHp=8,    --Initialized with little HP because its immediatily increased
+    hp=8,
     weapon  = 3,
     armour  = 2,
     healpot = 3,

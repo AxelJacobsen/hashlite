@@ -87,7 +87,7 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         putStrLn (name player++playerDeath1++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     
     | turnStep == 5 = do    --Oddvar has been defeated
-        putStrLn (name player++bossDefeated++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
+        putStrLn ("Stats:\n"++name player++bossDefeated++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     | otherwise = putStrLn "ERROR IN GAME LOOP"
 
 combatHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> Bool -> IO ()

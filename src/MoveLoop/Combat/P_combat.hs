@@ -23,12 +23,12 @@ generateEnemyInner enemyType statRng layer    --Enemy type will always be betwee
 --Generates a slime type enemy
 genSlime :: Int -> Enemy
 genSlime 0 = genSlime 1
-genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 4+3*rng, eDamage = 1, eArmour = rng, eDrops = rng+1, expDrop = 1}
+genSlime rng = Enemy{prefix = "a ", eName = "Slime", eMaxHp = 8+rng, eDamage = 1, eArmour = rng, eDrops = rng+1, expDrop = 1}
 
 --Generates a goblin type enemy
 genGoblin :: Int -> Enemy
 genGoblin 0 = genGoblin 1
-genGoblin rng = Enemy{prefix = "a ", eName = "Goblin", eMaxHp = 8+2*rng, eDamage = 2+rng, eArmour = rng-1, eDrops = rng+2, expDrop = 2}
+genGoblin rng = Enemy{prefix = "a ", eName = "Goblin", eMaxHp = 4+2*rng, eDamage = 2+rng, eArmour = rng-1, eDrops = rng+2, expDrop = 2}
 
 --Generates an Orc type enemy
 genOrc :: Int -> Enemy

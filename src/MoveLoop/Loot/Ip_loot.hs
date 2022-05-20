@@ -26,21 +26,21 @@ lootLoop player phase inSeed
         else lootLoop player 0 inSeed
     
     | phase == 1 = do
-        let (chestType, nextSeed) = randomR (0, 6) inSeed :: (Int, StdGen)
+        let mimic = 10
+        let (chestType, nextSeed) = randomR (0, mimic) inSeed :: (Int, StdGen)
         putStr openChest
         case chestType of
             0 -> do                                                         --TRAPPED
                 let burntPlayer = handleTrap player
                 if hp burntPlayer <= 0 then do putStrLn trappedDeath ; return (burntPlayer, nextSeed, 1) 
                 else do 
-                    putStrLn (trappedDamage++show(hp player - hp burntPlayer))
+                    putStrLn (trappedDamage++show(hp player - hp burntPlayer)++" damage!")
                     return (burntPlayer, nextSeed, 0)
-            6 -> do putStrLn mimicChest ; return (player, nextSeed, 2)      --MIMIC
+            mimic -> do putStrLn mimicChest ; return (player, nextSeed, 2)      --MIMIC
             _ -> lootLoop player 2 nextSeed                                 --SAFE CHEST
     
     | phase == 2 = do
         let (lootType, nextSeed) = randomR (0, length lootItems -1) inSeed :: (Int, StdGen)
-        putStrLn lootChest
-        putStrLn (lootItems!!lootType)
-        return (givePlayerLoot player lootType, inSeed, 0)
+        putStrLn (lootChest++(lootItems!!lootType))                         --Prints loot content
+        return (givePlayerLoot player lootType, inSeed, 0)                  --Returns player with loot
     | otherwise = return (player, inSeed, -99)-- Exit due to error

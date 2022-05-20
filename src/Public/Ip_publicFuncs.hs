@@ -12,7 +12,6 @@ printLineRec tim = do
     putStrLn ""
     printLineRec (tim-1)
 
-
 checkLevelUp :: Player -> IO Player
 checkLevelUp inPlayer = do
     if levelCap inPlayer<=pExp inPlayer then do
@@ -20,8 +19,8 @@ checkLevelUp inPlayer = do
         choice <- getLine
         if not (null choice) then do
             case toLower (head choice) of
-                's' -> return (levelUp inPlayer (lowestLayer inPlayer, 0))
-                'a' -> return (levelUp inPlayer (0, lowestLayer inPlayer))
+                's' -> return (levelUp inPlayer (3, 0))
+                'a' -> return (levelUp inPlayer (0, 3))
                 _ -> checkLevelUp inPlayer
         else checkLevelUp inPlayer
     else return inPlayer

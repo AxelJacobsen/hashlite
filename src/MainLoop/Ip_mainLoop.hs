@@ -24,7 +24,8 @@ import Public.Ip_publicFuncs(checkLevelUp)
 gameLoop :: Player -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO ()
 gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == -2 = do --New layer
-        putStrLn ("You have found the entrance to the next level!\nYou gain "++show (lowestLayer player)++" EXP!")
+        putStrLn (name player++" has found the entrance to the next level!\nYou gain "++show (lowestLayer player)++" EXP!")
+        putStrLn ("Entered level: "++show(lowestLayer player))
         let newSize = 1+length exploredMap    --Increases Size of new map
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
@@ -127,7 +128,7 @@ restHandler player exploredMap dataMap inSeed = do
     restMaybe <- restPrinter player getAttacked perception
     let (sleepPlayer, _) = if restMaybe then healPlayer (player, 0) else (player, 0)
     if getAttacked == 1 then combatHandler sleepPlayer exploredMap dataMap outSeed False
-    else gameLoop sleepPlayer 0 exploredMap (dataMap,outSeed)
+    else do putStrLn (name sleepPlayer++" healed "++show(hp sleepPlayer - hp player)++"");gameLoop sleepPlayer 0 exploredMap (dataMap,outSeed)
     
 restPrinter :: Player -> Int -> Int -> IO Bool
 restPrinter player getAttacked perception = do

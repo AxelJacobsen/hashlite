@@ -32,23 +32,11 @@ moveLoop player phase prevDir exploredMap (dataMap, inSeed)
                     putStrLn "Illegal input."
                     moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
             else moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
-    | phase == 2 = do
-        let boardTile = checkTileValue (playerPos player) dataMap
-        case boardTile of
-            -99 -> moveLoop player 1 prevDir exploredMap (dataMap, inSeed) --Error on tile, illegal pos
-            3 -> do
-                --ENTER COMBAT LOOP
-                return (player, exploredMap, dataMap, inSeed, boardTile)
-            4 -> do
-                --ENTER LOOT LOOP
-                moveLoop player 0 prevDir exploredMap (dataMap, inSeed) 
-            5 -> do
-                --ENTER ENCOUNTER LOOP
-                moveLoop player 0 prevDir exploredMap (dataMap, inSeed) 
-            100 -> do
-                --EXIT LEVEL
-                return (player, exploredMap, dataMap, inSeed, boardTile)
-            _ -> moveLoop player 0 prevDir exploredMap (dataMap, inSeed)  -- Tile is empty
+    | phase == 2 = do   
+        let boardTile = checkTileValue (playerPos player) dataMap                       --Gets tile value
+        if boardTile /= 0 then return (player, exploredMap, dataMap, inSeed, boardTile) --Tile has content
+        else moveLoop player 0 prevDir exploredMap (dataMap, inSeed)                    --Tile is empty
+
     | otherwise = return (player, exploredMap, dataMap, inSeed, -99)-- Exit due to error
 
 -- SIZE OF MAP, MAP, DESIGNED TO PRINT MOVED PLAYER PATH

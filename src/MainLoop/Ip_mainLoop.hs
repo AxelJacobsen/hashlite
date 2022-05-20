@@ -108,7 +108,7 @@ combatHandler player exploreMap dataMap inSeed isMimic = do
 lootHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
 lootHandler player exploreMap dataMap inSeed = do
     (loopPlayer, loopSeed, result) <- lootLoop player 0 inSeed
-    let (removedEnemyMap, isLegal) = checkForLegalMove (playerPos loopPlayer) 0 dataMap inSeed --Updates map regardless of kill or not
+    let (removedEnemyMap, isLegal) = checkForLegalMove (playerPos loopPlayer) 0 dataMap --Updates map regardless of kill or not
     let outMap = if isLegal then removedEnemyMap else dataMap   --Uses new map if legal, should be
     case result of
         0 -> do

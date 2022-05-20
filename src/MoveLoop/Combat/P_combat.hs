@@ -1,4 +1,4 @@
-module MoveLoop.Combat.P_combat(genMimic, generateEnemy,enemyDamage,playerDamage) where
+module MoveLoop.Combat.P_combat(legalizeDamage, generateEnemyInner, genMimic,generateEnemy, enemyDamage,playerDamage) where
 
 import Public.Consts.Structs(Player(..), Enemy(..))
 import System.Random (Random(randomR), StdGen)

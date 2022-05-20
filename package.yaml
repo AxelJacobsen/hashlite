@@ -47,7 +47,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hashlite-prog2006-project
-    - doctest
     - QuickCheck
     - HUnit
-    - hspec

@@ -5,9 +5,9 @@ import Public.Consts.Structs(Player)
 import Initialization.Pure.P_initChar(setMarkerEntry)
 
 --Checks if a given coordinate is on the map, and updates the map with the corresponding piece
-checkForLegalMove :: (Int,Int) -> Int -> [[Int]] -> StdGen -> ([[Int]], Bool)
-checkForLegalMove (_,_) _ [[]] _ = ([[]],False)
-checkForLegalMove (newX, newY) piece map seed
+checkForLegalMove :: (Int,Int) -> Int -> [[Int]] -> ([[Int]], Bool)
+checkForLegalMove (_,_) _ [[]] = ([[]],False)
+checkForLegalMove (newX, newY) piece map
     | newX < 0 || newY < 0 || length map <= newX || length map <= newY = (map, False)   --Trying to move out of bounds
     | checkTileValue (newX, newY) map == 99 = (map, True)                               --Trying to move onto start tile
     | otherwise = do

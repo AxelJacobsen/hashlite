@@ -1,4 +1,4 @@
-module Initialization.Pure.P_MapGenerator (generateBoard,generateEmptyBoard) where 
+module Initialization.Pure.P_MapGenerator (fillBoardWithValues', fillInnerBoard', fillInnerBoardEmpty', fillBoardEmpty', generateBoard, generateEmptyBoard) where 
 
 import System.Random ( Random(randomR), StdGen )
 

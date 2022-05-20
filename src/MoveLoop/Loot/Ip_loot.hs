@@ -26,8 +26,7 @@ lootLoop player phase inSeed
         else lootLoop player 0 inSeed
     
     | phase == 1 = do
-        let mimic = 10
-        let (chestType, nextSeed) = randomR (0, mimic) inSeed :: (Int, StdGen)
+        let (chestType, nextSeed) = randomR (0, 10) inSeed :: (Int, StdGen)
         putStr openChest
         case chestType of
             0 -> do                                                         --TRAPPED
@@ -36,7 +35,7 @@ lootLoop player phase inSeed
                 else do 
                     putStrLn (trappedDamage++show(hp player - hp burntPlayer)++" damage!")
                     return (burntPlayer, nextSeed, 0)
-            mimic -> do putStrLn mimicChest ; return (player, nextSeed, 2)      --MIMIC
+            10 -> do putStrLn mimicChest ; return (player, nextSeed, 2)      --MIMIC
             _ -> lootLoop player 2 nextSeed                                 --SAFE CHEST
     
     | phase == 2 = do

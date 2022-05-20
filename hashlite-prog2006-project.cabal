@@ -72,6 +72,13 @@ test-suite hashlite-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      CombatLoop_tests
+      Initialization_tests
+      LootLoop_tests
+      MainLoop_tests
+      MoveLoop_tests
+      PlayerUpdate_tests
+      PublicFunc_tests
       Paths_hashlite_prog2006_project
   hs-source-dirs:
       test
@@ -81,8 +88,6 @@ test-suite hashlite-test
     , QuickCheck
     , base >=4.7 && <5
     , directory
-    , doctest
     , hashlite-prog2006-project
-    , hspec
     , random
   default-language: Haskell2010

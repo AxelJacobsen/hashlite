@@ -1,10 +1,11 @@
-module Initialization.Pure.P_initChar (generateCharacter, placeStartEnd, setMarkerEntry) where
+module Initialization.Pure.P_initChar (generateCharacter, placeStartEnd, setMarkerEntry,setMarkerInner, calcLower) where
 import Public.Consts.Structs (Player (..))
 import System.Random ( Random(randomR), StdGen )
 import Public.P_publicFuncs(drop')
 import Public.P_updatePlayer (updatePos)
 
 generateCharacter :: String -> Player
+generateCharacter "" = generateCharacter "Jostein"
 generateCharacter name = Player {
     name = name,
     maxHp=8,    --Initialized with little HP because its immediatily increased
@@ -28,7 +29,6 @@ placeStartEnd size isVisible (map, inseed) = do
     let (startX, seedOne) = randomR (randomLower, size-1) inseed :: (Int, StdGen) --Generates starting position X
     let (startY, seedTwo) = randomR (randomLower, size-1) seedOne :: (Int, StdGen) --Generates starting position Y
     let (endX , seedThree) = randomR (0, size-2) seedTwo :: (Int, StdGen) --Generates exit position X
-    --let mapWithStart = setStartRec (startX, startY) map ([[]], outSeed)
     let mapWithStart = setMarkerEntry (startX, startY) (size-1, size) 99 map [[]]
 
     if isVisible || length map == 99 then (mapWithStart, inseed, startX, startY)

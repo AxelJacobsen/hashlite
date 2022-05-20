@@ -1,4 +1,4 @@
-module MainLoop_tests(mainTests)where
+module MainLoop_tests(mainTests) where
 import Test.QuickCheck
 import Control.Exception (evaluate)
 import System.Random ( Random(randomR), StdGen )

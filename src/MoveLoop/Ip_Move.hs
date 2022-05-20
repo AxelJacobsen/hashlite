@@ -139,12 +139,12 @@ printLines count = do putStr "---" ; printLines (count-1)
 
 handleDirInput :: Player -> Int -> Int -> (Int,Int) -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
 handleDirInput player piece prevDir (newX, newY) exploredMap (dataMap, inSeed) = do
-    let (newMap,isLegal) = checkForLegalMove (newX,newY) 88 exploredMap inSeed
+    let (newMap,isLegal) = checkForLegalMove (newX,newY) 88 exploredMap
     if isLegal then do
         let newPlayer = updatePos player newX newY
         let outPlayer = updatePrevdir newPlayer piece
         if playerPos player /= start player then do--Sets old position to be directional piece, but only if not startpos
-            let (outMap,isLegal) = checkForLegalMove (playerPos player) ((piece*10)+prevDir) newMap inSeed
+            let (outMap,isLegal) = checkForLegalMove (playerPos player) ((piece*10)+prevDir) newMap
             print ((piece*10)+prevDir)
             moveLoop outPlayer 2 piece outMap (dataMap, inSeed)
         else moveLoop outPlayer 2 piece newMap (dataMap, inSeed)

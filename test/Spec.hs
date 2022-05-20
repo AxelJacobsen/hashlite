@@ -12,11 +12,22 @@ import Public.P_updatePlayer (incrementExp, updatePos, newLayer)
 import Public.P_publicFuncs (healPlayer)
 
 import Initialization_tests(initTests)
+import MainLoop_tests(mainTests)
+import LootLoop_tests(lootTest)
+import CombatLoop_tests(combatTests)
+import MoveLoop_tests(moveTests)
 import Test.HUnit (runTestTT)
+import PublicFunc_tests(publicTests)
+import PlayerUpdate_tests(updateTests)
 
 main :: IO ()
 main = do
     _ <- runTestTT initTests
     _ <- runTestTT mainTests
-    
+    _ <- runTestTT combatTests
+    _ <- runTestTT lootTest
+    _ <- runTestTT moveTests
+    _ <- runTestTT publicTests
+    _ <- runTestTT updateTests
+
     putStrLn "Passed all tests!"

@@ -1,4 +1,4 @@
-module TextGeneral (helpFlag1,helpFlag2,helpFlag3, wantRest, restDanger, restNormal, restSafe, levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
+module TextGeneral (bossDefeated,helpFlag1,helpFlag2,helpFlag3, wantRest, restDanger, restNormal, restSafe, levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
 -- General text
 
 pressEnter = "Welcome! press enter to start!"
@@ -22,6 +22,8 @@ restSafe = "You feel safe here..."
 restNormal = "There isn't anyone around..."
 restDanger = "You feel as if you are being watched..."
 wantRest = "\nDo you want to rest? (y/n):"
+bossDefeated = " has defeated Oddvar Brå. Thus the world is free from his reign of terror.\nNo longer will people have to remember what they were doing on that fatefull day...\n"
+
 
 helpFlag1 = "Welcome to my PROG2006 project program.\nThe game is a simple Rougelike where you fight monsters, level up and advance the dungeon.\nYour goal is to fight your way to the bottom, and discover who awaits at the depths (layer 100).\n"
 helpFlag2 = "All the controls are presented ingame and should be pretty self explanatory, even for inexpirienced players.\nYou gain EXP from killing monsters and advancing layers. When you level up you can upgrade your weapon or increase your armour.\n"

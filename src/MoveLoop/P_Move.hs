@@ -1,7 +1,7 @@
 module MoveLoop.P_Move (checkForLegalMove,checkTileValue) where
 
 import System.Random ( Random(randomR), StdGen, mkStdGen, newStdGen )
-import Structs(Player)
+import Public.Consts.Structs(Player)
 import Initialization.Pure.P_initChar(setMarkerEntry)
 
 --Checks if a given coordinate is on the map, and updates the map with the corresponding piece

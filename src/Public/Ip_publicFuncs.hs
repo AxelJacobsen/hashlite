@@ -1,6 +1,6 @@
 module Public.Ip_publicFuncs(clearConsole, checkLevelUp)where
-import Structs (Player (..))
-import TextGeneral(levelUp1,levelUp2)
+import Public.Consts.Structs (Player (..))
+import Public.Consts.TextGeneral(levelUp1,levelUp2)
 import Data.Char (toLower)
 import Public.P_updatePlayer(levelUp)
 clearConsole :: IO ()

@@ -1,11 +1,11 @@
 module MoveLoop.Loot.Ip_loot(lootLoop) where
 import MoveLoop.Loot.LootText(discover,openChest,trappedChest,trappedDeath,trappedDamage,mimicChest,lootChest,lootItems)
 import MoveLoop.Loot.P_loot(handleTrap,givePlayerLoot)
-import Structs (Player (..), Enemy(..))
+import Public.Consts.Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import MoveLoop.Combat.CombatText (missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
-import TextGeneral(healMessage,outOfHeal)
+import Public.Consts.TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp, updateArmour, updateWeapon)
 import Data.Char (toLower)
 import Public.P_publicFuncs(healPlayer)

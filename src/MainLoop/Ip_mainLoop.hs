@@ -1,12 +1,12 @@
 module MainLoop.Ip_mainLoop (gameLoop) where
-import Structs (Player (..))
+import Public.Consts.Structs (Player (..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import System.Directory(doesFileExist)
 import Control.Monad
 import MainLoop.P_mainLoop(checkLegalIdleChoice)
-import TextGeneral (bossDefeated,wantRest, restDanger, restNormal, restSafe, levelUp1,levelUp2, continue,idleOptionsOne,idleOptionsTwo, exitGame, enterName,playerDeath1,playerDeath2,playerDeath3,playerDeath4)
-import Consts ( idleOptionsList, playerNamePath)
+import Public.Consts.TextGeneral (bossDefeated,wantRest, restDanger, restNormal, restSafe, levelUp1,levelUp2, continue,idleOptionsOne,idleOptionsTwo, exitGame, enterName,playerDeath1,playerDeath2,playerDeath3,playerDeath4)
+import Public.Consts.Consts ( idleOptionsList, playerNamePath)
 import Data.Char
 import Initialization.Impure.Ip_initChar (genNewFile)
 import Initialization.Pure.P_initChar (generateCharacter, placeStartEnd)

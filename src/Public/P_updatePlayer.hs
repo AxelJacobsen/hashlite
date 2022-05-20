@@ -1,6 +1,6 @@
 module Public.P_updatePlayer (levelUp, incrementExp, newLayer, increaseMaxHp, updateHp, updateWeapon, updateArmour, updateHeal, updateMoney, updateLayer, updatePos, updateGoal, updatePrevdir) where
 
-import Structs
+import Public.Consts.Structs
 
 -- I Honeslty wish i found a better method for this, but such is life and Haskell :(
 increaseMaxHp :: Player -> Int -> Player

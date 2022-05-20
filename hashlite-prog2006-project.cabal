@@ -25,7 +25,6 @@ source-repository head
 
 library
   exposed-modules:
-      Consts
       Initialization.Impure.Ip_initChar
       Initialization.Pure.P_initChar
       Initialization.Pure.P_MapGenerator
@@ -39,11 +38,13 @@ library
       MoveLoop.Loot.LootText
       MoveLoop.Loot.P_loot
       MoveLoop.P_Move
+      Public.Consts.Consts
+      Public.Consts.Logo
+      Public.Consts.Structs
+      Public.Consts.TextGeneral
       Public.Ip_publicFuncs
       Public.P_publicFuncs
       Public.P_updatePlayer
-      Structs
-      TextGeneral
   other-modules:
       Paths_hashlite_prog2006_project
   hs-source-dirs:

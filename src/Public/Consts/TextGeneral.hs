@@ -1,4 +1,4 @@
-module TextGeneral (bossDefeated,helpFlag1,helpFlag2,helpFlag3, wantRest, restDanger, restNormal, restSafe, levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
+module Public.Consts.TextGeneral (bossDefeated,helpFlag1,helpFlag2,helpFlag3, wantRest, restDanger, restNormal, restSafe, levelUp1, levelUp2, continue, idleOptionsOne,idleOptionsTwo,pressEnter,exitGame,enterName,moveSymbols,moveOptions,moveIllegal,healMessage,outOfHeal,playerDeath1,playerDeath2,playerDeath3,playerDeath4) where
 -- General text
 
 pressEnter = "Welcome! press enter to start!"

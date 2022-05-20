@@ -1,8 +1,8 @@
 module MoveLoop.Ip_Move (moveLoop) where
 
 import System.Random ( Random(randomR), StdGen)
-import Structs(Player (..))
-import TextGeneral(moveSymbols,moveOptions,moveIllegal)
+import Public.Consts.Structs(Player (..))
+import Public.Consts.TextGeneral(moveSymbols,moveOptions,moveIllegal)
 import Data.Char (toLower)
 import Public.P_updatePlayer (updatePos, updatePrevdir)
 import MoveLoop.P_Move(checkForLegalMove,checkTileValue)

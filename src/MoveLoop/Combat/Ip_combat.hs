@@ -1,9 +1,9 @@
 module MoveLoop.Combat.Ip_combat where
-import Structs (Player (..), Enemy(..))
+import Public.Consts.Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
 import MoveLoop.Combat.CombatText (oddVarEscape,oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack, critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
-import TextGeneral(healMessage,outOfHeal)
+import Public.Consts.TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp)
 import Data.Char (toLower)
 import Public.P_publicFuncs(healPlayer)
@@ -42,8 +42,8 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
                 clearConsole
                 let hasCrit = if crit then putStrLn critHit else putStr ""
                 let hasMissed = if dealtDamage == 0 then putStrLn (name player++missedAttack) else pDamagePrint player dealtDamage
-                hasCrit
                 hasMissed
+                hasCrit
                 checkDeath player enemy 2 (lEhp+dealtDamage, lPhp) dataMap outSeed
             'h' -> do
                 if 0 < healpot player then do
@@ -61,8 +61,8 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
         let hasCrit = if crit then putStrLn critHit ; else putStr ""
         let hasMissed = if takenDamage == 0 then putStrLn ("The "++eName enemy++missedAttack) else eDamagePrint enemy takenDamage
         let odd = if lowestLayer player == 100 then if crit then printBossTalk 1 outSeed else if takenDamage == 0 then printBossTalk (-1) outSeed else printBossTalk 0 outSeed ; else return outSeed
-        hasCrit
         hasMissed
+        hasCrit
         oddSeed <- odd
         checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap oddSeed
     

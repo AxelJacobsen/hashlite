@@ -1,6 +1,6 @@
 module MoveLoop.Combat.P_combat(genMimic, generateEnemy,enemyDamage,playerDamage) where
 
-import Structs(Player(..), Enemy(..))
+import Public.Consts.Structs(Player(..), Enemy(..))
 import System.Random (Random(randomR), StdGen)
 
 

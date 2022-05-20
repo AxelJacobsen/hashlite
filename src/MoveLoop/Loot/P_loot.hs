@@ -1,5 +1,5 @@
 module MoveLoop.Loot.P_loot(handleTrap,givePlayerLoot) where
-import Structs (Player (..))
+import Public.Consts.Structs (Player (..))
 import Public.P_updatePlayer (updateHp,updateArmour,updateWeapon,updateHeal)
 
 handleTrap :: Player -> Player

@@ -1,5 +1,5 @@
 module Initialization.Pure.P_initChar (generateCharacter, placeStartEnd, setMarkerEntry) where
-import Structs (Player (..))
+import Public.Consts.Structs (Player (..))
 import System.Random ( Random(randomR), StdGen )
 import Public.P_publicFuncs(drop')
 import Public.P_updatePlayer (updatePos)

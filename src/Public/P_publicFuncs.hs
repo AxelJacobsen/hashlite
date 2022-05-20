@@ -1,5 +1,5 @@
 module Public.P_publicFuncs(drop',healPlayer)where
-import Structs (Player (..))
+import Public.Consts.Structs (Player (..))
 import Public.P_updatePlayer (updateHp)
 
 drop' :: Int -> [a] -> [a]

@@ -27,8 +27,8 @@ library
   exposed-modules:
       Consts
       Initialization.Impure.Ip_initChar
-      Initialization.Pure.MapGenerator
       Initialization.Pure.P_initChar
+      Initialization.Pure.P_MapGenerator
       MainLoop.Ip_mainLoop
       MainLoop.P_mainLoop
       MoveLoop.Combat.CombatText

@@ -10,7 +10,7 @@ import Consts ( idleOptionsList, playerNamePath)
 import Data.Char
 import Initialization.Impure.Ip_initChar (genNewFile)
 import Initialization.Pure.P_initChar (generateCharacter, placeStartEnd)
-import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
+import Initialization.Pure.P_MapGenerator (generateBoard, generateEmptyBoard)
 import MoveLoop.Ip_Move(moveLoop)
 import MoveLoop.P_Move(checkForLegalMove)
 import MoveLoop.Combat.P_combat(generateEnemy, genMimic)
@@ -25,7 +25,7 @@ gameLoop :: Player -> Int -> [[Int]] -> ([[Int]], StdGen) -> IO ()
 gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
     | turnStep == -2 = do --New layer
         putStrLn ("You have found the entrance to the next level!\nYou gain "++show (lowestLayer player)++" EXP!")
-        let newSize = 2+length exploredMap    --Increases Size of new map
+        let newSize = 1+length exploredMap    --Increases Size of new map
         let (newExploredBoard, newSeed, startX, startY) = placeStartEnd newSize True (generateEmptyBoard newSize, inSeed) --Gets new start coords
         let (freshBoard, _) = generateBoard newSize 5 newSeed
         let (newFilledBoard, outSeed, goalX,goalY) = placeStartEnd newSize False (freshBoard, inSeed)                 -- Gets new goal coords
@@ -67,10 +67,11 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
             3 -> combatHandler newPlayer newlyExploredMap dataMap inSeed False  --COMBAT
             4 -> lootHandler newPlayer newlyExploredMap dataMap inSeed          --LOOT
             5 -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ENCOUNTER
-            100 -> gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)   --NEXT LEVEL
+            100 -> if lowestLayer newPlayer == 100 then combatHandler newPlayer newlyExploredMap dataMap inSeed False -- REdirects player to bossfight if found exit on last stage
+            else gameLoop newPlayer (-2) newlyExploredMap (dataMap,newSeed)     --NEXT LEVEL
             _ -> gameLoop newPlayer 0 newlyExploredMap (dataMap,newSeed)        --ALSO ERROR, SHOULDNT HAPPEN
     
-    | turnStep == 2 = restHandler player exploredMap board inSeed
+    | turnStep == 2 = restHandler player exploredMap board inSeed               --REST
     
     | turnStep == 3 = do
         putStrLn exitGame
@@ -89,19 +90,19 @@ gameLoop player turnStep exploredMap (board,inSeed) --INITIALIZE CHARACTER
         putStrLn (name player++bossDefeated++name player++playerDeath2++show (money player)++playerDeath3++show (lowestLayer player)++playerDeath4)
     | otherwise = putStrLn "ERROR IN GAME LOOP"
 
-
 combatHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> Bool -> IO ()
 combatHandler player exploreMap dataMap inSeed isMimic = do
     let enemy = if isMimic then (genMimic (lowestLayer player), inSeed) else generateEnemy inSeed (lowestLayer player)
     (loopPlayer, updatedDataMap, loopSeed, result) <- combatLoop player 0 (0,0) dataMap enemy
-    case result of
-        0 -> do
-            leveledPlayer <- checkLevelUp loopPlayer
-            putStrLn "Press enter to continue..."
-            trash <- getLine
-            gameLoop leveledPlayer 0 exploreMap (updatedDataMap, loopSeed)
-        1 -> do gameLoop loopPlayer 4 exploreMap (updatedDataMap, loopSeed)
-        _ -> do gameLoop loopPlayer 0 exploreMap (updatedDataMap, loopSeed)
+    let normalResults = case result of
+            0 -> do
+                leveledPlayer <- checkLevelUp loopPlayer
+                putStrLn "Press enter to continue..."
+                trash <- getLine
+                gameLoop leveledPlayer 0 exploreMap (updatedDataMap, loopSeed)
+            1 -> do gameLoop loopPlayer 4 exploreMap (updatedDataMap, loopSeed)
+            _ -> do gameLoop loopPlayer 0 exploreMap (updatedDataMap, loopSeed)
+    if lowestLayer player == 100 && result == 0 then gameLoop loopPlayer 5 exploreMap (updatedDataMap, loopSeed) else normalResults
 
 lootHandler :: Player -> [[Int]] -> [[Int]] -> StdGen -> IO ()
 lootHandler player exploreMap dataMap inSeed = do

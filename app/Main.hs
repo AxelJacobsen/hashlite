@@ -1,6 +1,6 @@
 module Main where
 
-import Initialization.Pure.MapGenerator (generateBoard, generateEmptyBoard)
+import Initialization.Pure.P_MapGenerator (generateBoard, generateEmptyBoard)
 import Initialization.Pure.P_initChar (generateCharacter)
 import System.Random (mkStdGen, newStdGen)
 import Structs (Player)

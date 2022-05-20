@@ -2,7 +2,7 @@ module MoveLoop.Combat.Ip_combat where
 import Structs (Player (..), Enemy(..))
 import System.Random ( Random(randomR), StdGen )
 import System.IO ( hGetContents, openFile, IOMode(ReadMode) )
-import MoveLoop.Combat.CombatText (oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack, critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
+import MoveLoop.Combat.CombatText (oddVarEscape,oddVarKills, oddvarTakeDmg, oddVarMiss, oddVarCrit, oddVarAttack, critHit, missedAttack, killedEnemy1,killedEnemy2,killedEnemy3,killedEnemy4, encounterEnemy, coinSuccess, coinNeutral, coinCritical, escape, pAttack1, pAttack2, eAttack, damage, escapeFail, escapeSuccess, combatOptions1, combatOptions2)
 import TextGeneral(healMessage,outOfHeal)
 import Public.P_updatePlayer (updatePos, newLayer, updateHp, updateHeal,updateMoney, incrementExp)
 import Data.Char (toLower)
@@ -22,12 +22,13 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
                 combatLoop player 2 (lEhp, lPhp) dataMap (enemy, inSeed)
             6 -> do
                 putStrLn (encounterEnemy++prefix enemy++eName enemy)
-                putStrLn (coinSuccess++escape)
-                combatLoop player 8 (lEhp, lPhp) dataMap (enemy, inSeed)
+                if lowestLayer player == 100 then combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed) 
+                    else do putStrLn (coinSuccess++escape) ; combatLoop player 8 (lEhp, lPhp) dataMap (enemy, inSeed)
             _ -> do
                 putStrLn (encounterEnemy++prefix enemy++eName enemy)
                 putStrLn coinNeutral
                 combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
+    
     | phase == 1 = do                                   --Player Turn
         printHp (name player) (eName enemy) (hp player-lPhp) (eMaxHp enemy-lEhp)
         putStr combatOptions1
@@ -52,9 +53,9 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
                 else do
                     putStrLn outOfHeal
                     combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
-            'e' ->  combatLoop player 9 (lEhp, lPhp) dataMap (enemy, inSeed)
+            'e' ->  if lowestLayer player == 100 then do putStrLn oddVarEscape ; combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed) else combatLoop player 9 (lEhp, lPhp) dataMap (enemy, inSeed)
             _ -> combatLoop player 1 (lEhp, lPhp) dataMap (enemy, inSeed)
-    
+
     | phase == 2 = do                                       --Enemy attack
         let (takenDamage, outSeed, crit) = enemyDamage enemy player inSeed
         let hasCrit = if crit then putStrLn critHit ; else putStr ""
@@ -66,7 +67,6 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
         checkDeath player enemy 1 (lEhp, lPhp+takenDamage) dataMap oddSeed
     
     | phase == 8 = do                                       --Free escape
-        putStrLn escape
         pInput <- getLine
         if null pInput then combatLoop player 8 (lEhp, lPhp) dataMap (enemy, inSeed)
         else case toLower (head pInput) of

@@ -1,4 +1,4 @@
-module MoveLoop.Combat.P_combat(generateEnemy,enemyDamage,playerDamage) where
+module MoveLoop.Combat.P_combat(genMimic, generateEnemy,enemyDamage,playerDamage) where
 
 import Structs(Player(..), Enemy(..))
 import System.Random (Random(randomR), StdGen)
@@ -49,6 +49,11 @@ genAbomination rng = Enemy{prefix = "an ", eName = "Abomination", eMaxHp = 100+(
 genOddvarBraa :: Int -> Enemy
 genOddvarBraa 0 = genOddvarBraa 1
 genOddvarBraa rng = Enemy{prefix = "", eName = "Oddvar Braa", eMaxHp = 1000+(100*rng), eDamage = 100+(30*rng), eArmour = 10+(10*rng), eDrops = 2766342, expDrop = 1000}
+
+-- Generates an abomination
+genMimic :: Int -> Enemy
+genMimic 0 = genMimic 1
+genMimic rng = Enemy{prefix = "a ", eName = "Mimic", eMaxHp = 20+rng, eDamage = 10+rng, eArmour = 30+rng, eDrops = 10*rng, expDrop = rng `div` 2}
 
 
 enemyDamage :: Enemy -> Player -> StdGen -> (Int, StdGen, Bool)

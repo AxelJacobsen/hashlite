@@ -86,10 +86,13 @@ combatLoop player phase (lEhp, lPhp) dataMap (enemy, inSeed) -- lehp and phph ar
     | phase == 10 = do                                      --Quit loop, player death
         printHp (name player) (eName enemy) (hp player-lPhp) (eMaxHp enemy-lEhp)
         return (player, dataMap, inSeed, 1)
+    
     | phase == 11 = do                                      --Quit loop, enemy killed
         printHp (name player) (eName enemy) (hp player-lPhp) 0
         putStrLn (name player++killedEnemy1++eName enemy++killedEnemy2++show (eDrops enemy)++killedEnemy3++show (expDrop enemy)++killedEnemy4)
-        let (removedEnemyMap, isLegal) = checkForLegalMove( playerPos player) 0 dataMap inSeed
+        
+        let (removedEnemyMap, isLegal) = checkForLegalMove (playerPos player) 0 dataMap inSeed
+        
         if isLegal then return (updateHp (updateMoney (incrementExp player (expDrop enemy))  (eDrops enemy)) (-lPhp), removedEnemyMap, inSeed, 0)
         else return (updateHp (updateMoney (incrementExp player (expDrop enemy))  (eDrops enemy)) (-lPhp), dataMap, inSeed, 0)
     | otherwise = return (player, dataMap, inSeed, -1)      -- Exit due to error

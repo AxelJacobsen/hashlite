@@ -36,6 +36,7 @@ library
       MoveLoop.Combat.P_combat
       MoveLoop.Ip_Move
       MoveLoop.Loot.Ip_loot
+      MoveLoop.Loot.LootText
       MoveLoop.Loot.P_loot
       MoveLoop.P_Move
       Public.Ip_publicFuncs

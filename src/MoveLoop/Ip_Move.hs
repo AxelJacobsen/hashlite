@@ -12,6 +12,8 @@ moveLoop player phase prevDir exploredMap (dataMap, inSeed)
     | phase == 0 = do-- Display Move Options and map
         putStrLn moveSymbols
         displayMap (length exploredMap) exploredMap
+        print exploredMap
+        print dataMap
         moveLoop player 1 prevDir exploredMap (dataMap, inSeed)
     | phase == 1 = do
         putStrLn moveOptions
@@ -149,10 +151,10 @@ printLines :: Int -> IO()
 printLines 0 = putStrLn "+"
 printLines count = do putStr "---" ; printLines (count-1)
 
-
 handleDirInput :: Player -> Int -> Int -> (Int,Int) -> [[Int]] -> ([[Int]], StdGen) -> IO (Player, [[Int]], [[Int]], StdGen, Int)
 handleDirInput player piece prevDir (newX, newY) exploredMap (dataMap, inSeed) = do
     let (newMap,isLegal) = checkForLegalMove (newX,newY) 88 exploredMap inSeed
+    print (checkTileValue (newX,newY) exploredMap)
     if isLegal then do
         let newPlayer = updatePos player newX newY
         let outPlayer = updatePrevdir newPlayer piece

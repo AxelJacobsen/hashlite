@@ -1,4 +1,4 @@
-module Public.Ip_publicFuncs(clearConsole, checkLevelUp)where
+module Public.Ip_publicFuncs(actionHandler,clearConsole, checkLevelUp)where
 import Public.Consts.Structs (Player (..))
 import Public.Consts.TextGeneral(levelUp1,levelUp2)
 import Data.Char (toLower)
@@ -24,3 +24,14 @@ checkLevelUp inPlayer = do
                 _ -> checkLevelUp inPlayer
         else checkLevelUp inPlayer
     else return inPlayer
+
+actionHandler :: String -> IO Bool
+actionHandler question = do
+    putStrLn question
+    yesNo <- getLine
+    if not (null yesNo) then do
+        case toLower (head yesNo) of
+            'y' -> return True
+            'n' -> return False
+            _ -> actionHandler question
+    else actionHandler question

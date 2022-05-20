@@ -1,4 +1,3 @@
-import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
 import Public.Consts.Structs (Player (..))
@@ -18,4 +17,6 @@ import Test.HUnit (runTestTT)
 main :: IO ()
 main = do
     _ <- runTestTT initTests
+    _ <- runTestTT mainTests
+    
     putStrLn "Passed all tests!"
